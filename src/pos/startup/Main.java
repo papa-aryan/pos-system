@@ -18,7 +18,7 @@ public class Main {
      * @param args The application does not take any command line arguments
      */
     public static void main(String[] args) {
-         InventorySystem invSys = new InventorySystem();
+        InventorySystem invSys = new InventorySystem();
         // Step 2: Create DiscountDatabase
         DiscountDatabase discDB = new DiscountDatabase();
         // Step 3: Create AccountingSystem
@@ -27,6 +27,7 @@ public class Main {
         Printer printer = new Printer();
 
         Controller  contr = new Controller(invSys, discDB, accSys, printer);
-        new View(contr);
+        View view = new View(contr);
+        view.runFakeExecution(); // Start the fake execution of the application
     }
 }

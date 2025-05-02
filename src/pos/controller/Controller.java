@@ -4,6 +4,7 @@ import pos.integration.AccountingSystem;
 import pos.integration.DiscountDatabase;
 import pos.integration.InventorySystem;
 import pos.integration.Printer;
+import pos.model.Sale;
 
 /*
  * This is the application's controller class. All calls to the model pass through here.
@@ -13,6 +14,8 @@ public class Controller {
     private DiscountDatabase discDB;
     private AccountingSystem accSys;
     private Printer printer;
+
+    private Sale sale;
 
     /*
      * The constructor initializes the controller with the necessary components.
@@ -28,5 +31,13 @@ public class Controller {
         this.discDB = discDB;
         this.accSys = accSys;
         this.printer = printer;
+    }
+
+    /*
+     * Starts a new sale. This method must be called before any other methods.
+     *   *cant register an item before a sale is started for example.*
+     */
+    public void startSale() {
+        sale = new Sale();
     }
 }
