@@ -18,6 +18,7 @@ public class Main {
      * @param args The application does not take any command line arguments
      */
     public static void main(String[] args) {
+        System.out.println("Starting the application...");
         InventorySystem invSys = new InventorySystem();
         // Step 2: Create DiscountDatabase
         DiscountDatabase discDB = new DiscountDatabase();

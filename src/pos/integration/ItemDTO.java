@@ -1,5 +1,7 @@
 package pos.integration; // Keeping it in integration as per your current structure
 
+import pos.model.Amount;
+
 /*
  * Represents a DTO for one specific item.
  * Defined by the integration layer to transfer item data.
@@ -7,7 +9,7 @@ package pos.integration; // Keeping it in integration as per your current struct
  */
 public final class ItemDTO {
     private final int itemID;
-    private final double price; // Assuming Amount maps to double for now
+    private final Amount price; // SHOULD BE Amount TYPE NOT double
     private final int tax;      // Tax rate as percentage points (e.g., 25 for 25%)
     private final String description;
 
@@ -20,7 +22,7 @@ public final class ItemDTO {
      * @param tax The tax rate applicable to the item as percentage points (e.g., 25 for 25%).
      * @param description A description of the item.
      */
-    public ItemDTO(int itemID, double price, int tax, String description) {
+    public ItemDTO(int itemID, Amount price, int tax, String description) {
         this.itemID = itemID;
         this.price = price;
         this.tax = tax;
@@ -33,7 +35,7 @@ public final class ItemDTO {
         return itemID;
     }
 
-    public double getPrice() {
+    public Amount getPrice() {
         return price;
     }
 

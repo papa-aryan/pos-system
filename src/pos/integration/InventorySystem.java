@@ -1,5 +1,7 @@
 package pos.integration;
 
+import pos.model.Amount;
+
 /*
  * Represents the external inventory system. (Placeholder)
  * Contains methods for accessing item data.
@@ -17,14 +19,14 @@ public class InventorySystem {
 
         if (itemID == 101) {
             String description = "Coffee";
-            double price = 15.00;
+            Amount price = new Amount(15.00);
             int tax = 25; // 25%
             System.out.println("InventorySystem: Found item " + itemID);
             return new ItemDTO(itemID, price, tax, description);
 
         } else if (itemID == 102) {
             String description = "Croissant";
-            double price = 2.50;
+            Amount price = new Amount(2.50);
             int tax = 12; // 12%
             System.out.println("InventorySystem: Found item " + itemID);
             return new ItemDTO(itemID, price, tax, description);

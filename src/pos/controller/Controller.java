@@ -6,6 +6,9 @@ import pos.integration.InventorySystem;
 import pos.integration.Printer;
 import pos.integration.ItemDTO;
 import pos.model.Sale;
+import pos.model.SaleInfoDTO;
+import pos.integration.DiscountInfoDTO;
+
 
 /*
  * This is the application's controller class. All calls to the model pass through here.
@@ -16,7 +19,8 @@ public class Controller {
     private AccountingSystem accSys;
     private Printer printer;
 
-    private Sale sale;
+    // Package private to allow access from test files
+    Sale sale;
 
     /*
      * The constructor initializes the controller with the necessary components.
@@ -52,7 +56,14 @@ public class Controller {
 
         // Check if sale has been started
         if (sale == null) {
-            return; 
+            System.err.println("Controller ERROR: Cannot enter item before starting a sale."); // Good practice to log error
+            return;
+        }
+    
+        // Add quantity validation
+        if (quantity <= 0) {
+             System.err.println("Controller ERROR: Quantity must be positive. Item ID " + itemID + " NOT added.");
+             return; // Stop processing if quantity is invalid
         }
         
         ItemDTO itemInfo = invSys.getItemInfo(itemID);
@@ -64,6 +75,34 @@ public class Controller {
         }
     }
 
-    // Other methods from class diagram (endSale, requestDiscount, etc.) are not needed yet.
+    /*
+     * Requests a discount for the specified customer ID.
+     * Retrieves sale info, checks for discounts, and applies it to the sale.
+     *
+     * @param customerID The ID of the customer requesting the discount.
+     */
+    public void requestDiscount(int customerID) {
+        System.out.println("Controller: Received request for discount for customer ID: " + customerID);
+        if (sale == null) {
+            System.err.println("Controller ERROR: Cannot request discount before starting a sale.");
+            return;
+        }
+
+        // 1.1: Get Sale Info from Sale
+        SaleInfoDTO saleInfo = sale.getSaleInfoForDiscount();
+
+        // 1.2: Get Discount from DiscountDatabase
+        DiscountInfoDTO discountInfo = discDB.getDiscount(customerID, saleInfo);
+
+        // 1.3: Apply Discount to Sale
+        sale.applyDiscount(discountInfo);
+
+        // 1.4: Get Total After Discount (This step might be internal to Sale or called later)
+        // The diagram shows Sale calling this on itself, which is unusual.
+        // Often, the Controller would ask the Sale for the updated total *after* applying the discount.
+        // For now, the application logic is handled within sale.applyDiscount's placeholder.
+        System.out.println("Controller: Discount request processed.");
+    }
+
 }
 

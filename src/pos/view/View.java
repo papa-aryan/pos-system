@@ -36,6 +36,13 @@ public class View {
 
         // Simulate entering item with invalid quantity
         enterItem(102, 0);
+        enterItem(101, -1);
+
+        // Simulate requesting a discount for customer 1234 (should get 10%)
+        requestDiscount(1234);
+
+        // Simulate requesting a discount for customer 5678 (should get none)
+        requestDiscount(5678);
 
         // TODO: Add calls for discounts, payment, and printing receipt later
     }
@@ -51,6 +58,19 @@ public class View {
         System.out.println("-------------------------------------"); // Separator
         System.out.println("View: Attempting to enter item ID: " + itemID + ", Quantity: " + quantity);
         contr.enterItem(itemID, quantity);
+    }
+
+    /*
+     * Private helper method to simulate a user requesting a discount.
+     * Calls the controller's requestDiscount method.
+     *
+     * @param customerID The ID of the customer.
+     */
+    private void requestDiscount(int customerID) {
+        System.out.println("-------------------------------------"); // Separator
+        System.out.println("View: Attempting to request discount for customer ID: " + customerID);
+        contr.requestDiscount(customerID);
+        // TODO: Display discount application result from Controller later
     }
 
 }
