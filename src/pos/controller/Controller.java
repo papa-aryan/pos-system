@@ -8,6 +8,7 @@ import pos.integration.ItemDTO;
 import pos.model.Sale;
 import pos.model.SaleInfoDTO;
 import pos.integration.DiscountInfoDTO;
+import pos.model.Amount;
 
 
 /*
@@ -44,6 +45,7 @@ public class Controller {
      */
     public void startSale() {
         sale = new Sale();
+        System.out.println("Controller: Sale started.");
     }
 
     /*
@@ -102,6 +104,24 @@ public class Controller {
         // Often, the Controller would ask the Sale for the updated total *after* applying the discount.
         // For now, the application logic is handled within sale.applyDiscount's placeholder.
         System.out.println("Controller: Discount request processed.");
+    }
+
+    /*
+     * Ends the current sale and retrieves the final total amount including tax.
+     * (Further steps like payment and receipt printing would follow).
+     */
+    public void endSale() {
+        System.out.println("Controller: Received request to end sale.");
+        // IS THIS CONDITION EVEN POSSIBLE? SALE MUST BE STARTED BEFORE ENDING?!
+        if (sale == null) {
+            System.err.println("Controller ERROR: Cannot end sale before starting one.");
+            return;
+        }
+
+        Amount finalTotal = sale.getTotalWithTax();
+
+        System.out.println("Controller: Sale ended. Final total (incl. tax): " + finalTotal);
+        // TODO: Implement payment processing and receipt generation later
     }
 
 }

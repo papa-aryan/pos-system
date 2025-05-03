@@ -14,7 +14,8 @@ public class Sale {
     private LocalTime saleTime;
     private Receipt receipt;
     private Amount runningTotal; 
-    private List<SaleItem> items; // List to store SaleItem objects
+    private Amount totalVAT; 
+    private List<SaleItem> items; 
 
     private static class SaleItem {
         ItemDTO itemInfo;
@@ -40,6 +41,7 @@ public class Sale {
     public Sale() {
         setTimeOfSale();
         this.runningTotal = new Amount(0); 
+        this.totalVAT = new Amount(0);
         this.items = new ArrayList<>(); 
 
     }
@@ -71,13 +73,27 @@ public class Sale {
 
         // TODO: Later, update running totals using itemInfo.getPrice() and itemInfo.getTax().
 
-        
-        Amount itemTotal = itemInfo.getPrice().multiply(quantity);
-        this.runningTotal = this.runningTotal.plus(itemTotal);
+        Amount itemPriceBeforeTax = itemInfo.getPrice();
+        Amount itemsTotalPrice = itemPriceBeforeTax.multiply(quantity);
+        this.runningTotal = this.runningTotal.plus(itemsTotalPrice);
+        System.out.println("Sale: Updated running total (pre-tax): " + this.runningTotal);
 
-        System.out.println("Sale: Updated running total: " + this.runningTotal);
 
-        // TODO: Later, update total VAT as well.
+        // Calculate and update total VAT
+        calculateAndAddVAT(itemPriceBeforeTax, itemInfo.getTax(), quantity);
+        System.out.println("Sale: Updated total VAT: " + this.totalVAT);
+
+    }
+
+    private void calculateAndAddVAT(Amount itemPriceBeforeTax, double taxPercentage, int quantity) {
+        // Calculate tax rate as a decimal
+        double taxRate = taxPercentage / 100.0;
+        // Calculate VAT amount for a single item
+        Amount itemVAT = new Amount(itemPriceBeforeTax.getAmount() * taxRate);
+        // Calculate total VAT for the given quantity of items
+        Amount itemsTotalVAT = itemVAT.multiply(quantity);
+        // Add this amount to the sale's accumulated total VAT
+        this.totalVAT = this.totalVAT.plus(itemsTotalVAT);
     }
 
      /*
@@ -129,7 +145,6 @@ public class Sale {
         if ("Percentage".equals(discountInfo.getDiscountType())) {
             int discountPercentage = discountInfo.getDiscountPercentage();
             // Careful with integer division. Calculate discount amount first.
-            // amount * percentage / 100
             double discountAmount = (this.runningTotal.getAmount() * discountPercentage) / 100;
             Amount discount = new Amount(discountAmount);
             return this.runningTotal.minus(discount);
@@ -138,6 +153,19 @@ public class Sale {
         }
         // Default if type unknown or other types exist
         return this.runningTotal;
+    }
+
+    /*
+     * Calculates the final total price for the sale, including tax.
+     * This is the (potentially discounted) running total plus the accumulated VAT.
+     *
+     * @return The final total amount including VAT.
+     */
+    public Amount getTotalWithTax() {
+        Amount finalTotal = this.runningTotal.plus(this.totalVAT);
+        System.out.println("Sale: Calculating final total: Running Total (after discount) " + this.runningTotal +
+                           " + Total VAT " + this.totalVAT + " = Final Total " + finalTotal);
+        return finalTotal;
     }
 
 }

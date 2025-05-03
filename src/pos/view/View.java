@@ -23,6 +23,7 @@ public class View {
      */
     public void runFakeExecution() {
 
+        System.out.println("View: Starting fake execution of sale...");
         contr.startSale(); 
 
         // Simulate entering item 101 (should be found)
@@ -43,6 +44,9 @@ public class View {
 
         // Simulate requesting a discount for customer 5678 (should get none)
         requestDiscount(5678);
+
+        contr.endSale(); 
+        System.out.println("View: Fake sale execution finished.");
 
         // TODO: Add calls for discounts, payment, and printing receipt later
     }
