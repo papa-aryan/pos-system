@@ -4,6 +4,7 @@ import pos.integration.AccountingSystem;
 import pos.integration.DiscountDatabase;
 import pos.integration.InventorySystem;
 import pos.integration.Printer;
+import pos.integration.ItemDTO;
 import pos.model.Sale;
 
 /*
@@ -40,4 +41,29 @@ public class Controller {
     public void startSale() {
         sale = new Sale();
     }
+
+    /*
+     * Enters an item into the current sale.
+     *
+     * @param itemID The unique identifier of the item to enter.
+     * @param quantity The quantity of the item to enter.
+     */
+    public void enterItem(int itemID, int quantity) {
+
+        // Check if sale has been started
+        if (sale == null) {
+            return; 
+        }
+        
+        ItemDTO itemInfo = invSys.getItemInfo(itemID);
+
+        if (itemInfo != null) {
+            sale.addItem(itemInfo, quantity);
+        } else {
+            System.err.println("Controller ERROR: Item ID " + itemID + " not found in inventory. Item NOT added to sale.");
+        }
+    }
+
+    // Other methods from class diagram (endSale, requestDiscount, etc.) are not needed yet.
 }
+

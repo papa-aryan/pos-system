@@ -18,15 +18,39 @@ public class View {
         this.contr = contr;
     }
 
+    /*
+     * Simulates the flow of a sale by making hardcoded calls to the controller.
+     */
     public void runFakeExecution() {
-        // Step 1: Create Controller
-        contr.startSale(); // Start a new sale
-        // Step 2: Register items, discounts, and payment (hardcoded for now)
-        // contr.registerItem("item1", 10.0, 2); // Example item registration
-        // contr.registerDiscount("discount1", 5.0); // Example discount registration
-        // contr.processPayment(20.0); // Example payment processing
-        // Step 3: Print receipt (hardcoded for now)
-        // contr.printReceipt(); // Example receipt printing
-        System.out.println("A new sale has been started!!");
+
+        contr.startSale(); 
+
+        // Simulate entering item 101 (should be found)
+        enterItem(101, 2);
+
+        // Simulate entering item 102 (should be found)
+        enterItem(102, 1);
+
+        // Simulate entering item 999 (should NOT be found)
+        enterItem(999, 1);
+
+        // Simulate entering item with invalid quantity
+        enterItem(102, 0);
+
+        // TODO: Add calls for discounts, payment, and printing receipt later
     }
+
+    /*
+     * Private helper method to simulate a user entering item details.
+     * Calls the controller's enterItem method.
+     *
+     * @param itemID The ID of the item entered.
+     * @param quantity The quantity of the item entered.
+     */
+    private void enterItem(int itemID, int quantity) {
+        System.out.println("-------------------------------------"); // Separator
+        System.out.println("View: Attempting to enter item ID: " + itemID + ", Quantity: " + quantity);
+        contr.enterItem(itemID, quantity);
+    }
+
 }
