@@ -1,4 +1,4 @@
-package pos.integration; // Keeping it in integration as per your current structure
+package pos.integration;
 
 import pos.model.Amount;
 
@@ -9,8 +9,8 @@ import pos.model.Amount;
  */
 public final class ItemDTO {
     private final int itemID;
-    private final Amount price; // SHOULD BE Amount TYPE NOT double
-    private final int tax;      // Tax rate as percentage points (e.g., 25 for 25%)
+    private final Amount price; 
+    private final int tax;
     private final String description;
 
     /*
@@ -29,7 +29,7 @@ public final class ItemDTO {
         this.description = description;
     }
 
-     // Getter methods
+     // Getters
 
     public int getItemID() {
         return itemID;

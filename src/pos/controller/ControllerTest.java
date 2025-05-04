@@ -3,8 +3,8 @@ package pos.controller;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pos.integration.*; // Import integration package
-import pos.model.Amount; // Import model package
+import pos.integration.*; 
+import pos.model.Amount; 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ControllerTest {
@@ -55,7 +55,7 @@ public class ControllerTest {
         Amount totalAfterInvalid = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
         assertEquals(initialTotal, totalAfterInvalid, "Entering item with quantity 0 should not change sale total.");
 
-        instanceToTest.enterItem(itemID, -1); // Test negative quantity
+        instanceToTest.enterItem(itemID, -1); 
         totalAfterInvalid = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
         assertEquals(initialTotal, totalAfterInvalid, "Entering item with negative quantity should not change sale total.");
     }
@@ -76,7 +76,6 @@ public class ControllerTest {
         instanceToTest.enterItem(101, 1);
         // Check that the internal sale object is still null (or wasn't accessed causing NullPointerException)
         assertNull(instanceToTest.sale, "Sale object should be null if enterItem called before startSale.");
-        // No exception should be thrown due to the null check in Controller.
     }
 
     // Tests for requestDiscount
@@ -84,12 +83,12 @@ public class ControllerTest {
     @Test
     void testRequestDiscountAppliesDiscountToSale() {
         instanceToTest.startSale();
-        instanceToTest.enterItem(101, 2); // Sale total = 30.0
+        instanceToTest.enterItem(101, 2); 
         int customerIDWithDiscount = 1234;
 
         instanceToTest.requestDiscount(customerIDWithDiscount);
 
-        Amount expectedTotal = new Amount(30.0 * 0.9); // 27.0 (10% discount)
+        Amount expectedTotal = new Amount(30.0 * 0.9); 
         Amount actualTotal = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
         assertEquals(expectedTotal, actualTotal, "Requesting discount for customer 1234 should apply 10% discount.");
     }
@@ -97,11 +96,11 @@ public class ControllerTest {
     @Test
     void testRequestDiscountDoesNotApplyDiscountToSale() {
         instanceToTest.startSale();
-        instanceToTest.enterItem(101, 2); // Sale total = 30.0
+        instanceToTest.enterItem(101, 2); 
         Amount initialTotal = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
         int customerIDWithoutDiscount = 5678;
 
-        instanceToTest.requestDiscount(customerIDWithoutDiscount); // Should find no discount
+        instanceToTest.requestDiscount(customerIDWithoutDiscount); 
 
         Amount actualTotal = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
         assertEquals(initialTotal, actualTotal, "Requesting discount for customer 5678 should not change sale total.");
@@ -112,4 +111,74 @@ public class ControllerTest {
         instanceToTest.requestDiscount(1234);
         assertNull(instanceToTest.sale, "Sale object should be null if requestDiscount called before startSale.");
     }
+
+    // Tests for endSale
+
+    @Test
+    void testEndSaleCalculatesFinalTotal() {
+        instanceToTest.startSale();
+        instanceToTest.enterItem(101, 1);
+        instanceToTest.endSale();
+        // Verify that the final total was calculated and stored in the Sale object
+        assertNotNull(instanceToTest.sale.getFinalTotalWithTax(), "Final total should be calculated by endSale.");
+        assertEquals(new Amount(18.75), instanceToTest.sale.getFinalTotalWithTax(), "Final total calculation should be correct.");
+    }
+
+    @Test
+    void testEndSaleBeforeStartSaleDoesNothing() {
+        // Calling endSale before startSale should ideally not throw an error due to the check
+        // and the sale object should remain null.
+        assertDoesNotThrow(() -> {
+             instanceToTest.endSale();
+        }, "endSale before startSale should not throw an exception.");
+        assertNull(instanceToTest.sale, "Sale object should be null if endSale called before startSale.");
+    }
+
+
+    // Tests for makePayment
+
+    @Test
+    void testMakePaymentSuccessfulFlow() {
+        instanceToTest.startSale();
+        instanceToTest.enterItem(101, 1); 
+        instanceToTest.endSale();
+        Amount paidAmount = new Amount(20.0);
+
+        assertDoesNotThrow(() -> {
+            instanceToTest.makePayment(paidAmount);
+        }, "Successful payment flow should not throw exceptions.");
+    }
+
+    @Test
+    void testMakePaymentBeforeStartSaleDoesNothing() {
+        Amount paidAmount = new Amount(20.0);
+        assertDoesNotThrow(() -> {
+             instanceToTest.makePayment(paidAmount);
+        }, "makePayment before startSale should not throw an exception.");
+        assertNull(instanceToTest.sale, "Sale object should be null if makePayment called before startSale.");
+    }
+
+    @Test
+    void testMakePaymentBeforeEndSale() {
+        instanceToTest.startSale();
+        instanceToTest.enterItem(101, 1);
+        Amount paidAmount = new Amount(20.0);
+
+        assertDoesNotThrow(() -> {
+             instanceToTest.makePayment(paidAmount);
+        }, "makePayment before endSale should log an error but not crash.");
+    }
+
+     @Test
+    void testMakePaymentWithInsufficientAmount() {
+        instanceToTest.startSale();
+        instanceToTest.enterItem(101, 1); // Total is 18.75
+        instanceToTest.endSale();
+        Amount insufficientPaidAmount = new Amount(10.0);
+
+        assertDoesNotThrow(() -> {
+             instanceToTest.makePayment(insufficientPaidAmount);
+        }, "makePayment with insufficient amount should log an error but not crash.");
+    }
+
 }

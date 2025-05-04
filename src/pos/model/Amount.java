@@ -64,12 +64,17 @@ public final class Amount {
      *
      * @return The amount formatted as a string (e.g., "15.70").
      */
-    // @Override removed
     public String toString() {
         return String.format("%.2f", amount);
     }
 
-    // add comment?
+
+    /* 
+     * Checks if this amount is equal to another object.
+     * 
+     * @param The object to compare with.
+     * @return true if the object is an Amount with the same value, false otherwise.
+     */
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -77,7 +82,11 @@ public final class Amount {
         return Double.compare(other.amount, amount) == 0;
     }
 
-    // add comment?
+    /*
+     * Returns a hash code for this amount.
+     * 
+     * @return The hash code based on the amount value.
+     */
     public int hashCode() {
         return Objects.hash(amount);
     }

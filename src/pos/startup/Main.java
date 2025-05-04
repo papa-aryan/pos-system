@@ -20,15 +20,12 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Starting the application...");
         InventorySystem invSys = new InventorySystem();
-        // Step 2: Create DiscountDatabase
         DiscountDatabase discDB = new DiscountDatabase();
-        // Step 3: Create AccountingSystem
         AccountingSystem accSys = new AccountingSystem();
-        // Step 4: Create Printer
         Printer printer = new Printer();
 
         Controller  contr = new Controller(invSys, discDB, accSys, printer);
         View view = new View(contr);
-        view.runFakeExecution(); // Start the fake execution of the application
+        view.runFakeExecution();
     }
 }

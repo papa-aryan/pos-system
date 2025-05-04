@@ -4,8 +4,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pos.model.Amount;
-import pos.model.SaleInfoDTO; // Import necessary DTOs
+import pos.model.SaleInfoDTO; 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
 
 public class DiscountDatabaseTest {
     private DiscountDatabase instanceToTest;
@@ -14,8 +16,7 @@ public class DiscountDatabaseTest {
     @BeforeEach
     void setUp() {
         instanceToTest = new DiscountDatabase();
-        // Create a dummy SaleInfoDTO needed for the getDiscount method signature
-        dummySaleInfo = new SaleInfoDTO(new Amount(100.0)); // Content doesn't matter for current logic
+        dummySaleInfo = new SaleInfoDTO(new Amount(100.0), new ArrayList<>(), new Amount(0.0));
     }
 
     @AfterEach
@@ -42,7 +43,6 @@ public class DiscountDatabaseTest {
     void testGetDiscountFoundCorrectType() {
         int customerIDWithDiscount = 1234;
         DiscountInfoDTO result = instanceToTest.getDiscount(customerIDWithDiscount, dummySaleInfo);
-        // Assuming result is not null
         assertEquals("Percentage", result.getDiscountType(), "Discount type should be 'Percentage' for customer 1234.");
     }
 

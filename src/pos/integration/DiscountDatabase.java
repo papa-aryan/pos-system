@@ -14,10 +14,9 @@ public class DiscountDatabase {
      */
     public DiscountInfoDTO getDiscount(int customerID, SaleInfoDTO saleInfo) {
         System.out.println("DiscountDatabase: Checking discounts for customer ID: " + customerID);
-        // Placeholder logic: Always return a 10% discount for customer 1234
+        
         if (customerID == 1234) {
             System.out.println("DiscountDatabase: Found 10% discount for customer " + customerID);
-            // Create a zero Amount for percentage-based discount
             return new DiscountInfoDTO(new Amount(0), 10, "Percentage");
         } else {
             System.out.println("DiscountDatabase: No discount found for customer " + customerID);

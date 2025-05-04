@@ -9,6 +9,7 @@ import pos.model.Sale;
 import pos.model.SaleInfoDTO;
 import pos.integration.DiscountInfoDTO;
 import pos.model.Amount;
+import pos.model.ReceiptDTO;
 
 
 /*
@@ -56,16 +57,14 @@ public class Controller {
      */
     public void enterItem(int itemID, int quantity) {
 
-        // Check if sale has been started
         if (sale == null) {
             System.err.println("Controller ERROR: Cannot enter item before starting a sale."); // Good practice to log error
             return;
         }
     
-        // Add quantity validation
         if (quantity <= 0) {
              System.err.println("Controller ERROR: Quantity must be positive. Item ID " + itemID + " NOT added.");
-             return; // Stop processing if quantity is invalid
+             return; 
         }
         
         ItemDTO itemInfo = invSys.getItemInfo(itemID);
@@ -90,19 +89,12 @@ public class Controller {
             return;
         }
 
-        // 1.1: Get Sale Info from Sale
         SaleInfoDTO saleInfo = sale.getSaleInfoForDiscount();
 
-        // 1.2: Get Discount from DiscountDatabase
         DiscountInfoDTO discountInfo = discDB.getDiscount(customerID, saleInfo);
 
-        // 1.3: Apply Discount to Sale
         sale.applyDiscount(discountInfo);
 
-        // 1.4: Get Total After Discount (This step might be internal to Sale or called later)
-        // The diagram shows Sale calling this on itself, which is unusual.
-        // Often, the Controller would ask the Sale for the updated total *after* applying the discount.
-        // For now, the application logic is handled within sale.applyDiscount's placeholder.
         System.out.println("Controller: Discount request processed.");
     }
 
@@ -112,16 +104,55 @@ public class Controller {
      */
     public void endSale() {
         System.out.println("Controller: Received request to end sale.");
-        // IS THIS CONDITION EVEN POSSIBLE? SALE MUST BE STARTED BEFORE ENDING?!
+
         if (sale == null) {
             System.err.println("Controller ERROR: Cannot end sale before starting one.");
             return;
         }
 
-        Amount finalTotal = sale.getTotalWithTax();
+        Amount finalTotal = sale.calculateAndGetFinalTotal(); 
 
         System.out.println("Controller: Sale ended. Final total (incl. tax): " + finalTotal);
-        // TODO: Implement payment processing and receipt generation later
+    }
+
+     /*
+     * Processes the payment received from the customer, generates and prints a receipt,
+     * and updates external systems (accounting, inventory).
+     * This method assumes endSale() has already been called.
+     * Corresponds to sequence diagram for makePayment.
+     *
+     * @param paidAmount The amount of money paid by the customer.
+     */
+    public void makePayment(Amount paidAmount) {
+        System.out.println("Controller: Received request to make payment. Amount: " + paidAmount);
+        if (sale == null) {
+            System.err.println("Controller ERROR: Cannot make payment before starting a sale.");
+            return;
+        }
+        if (sale.getFinalTotalWithTax() == null) {
+             System.err.println("Controller ERROR: Cannot make payment before endSale() is called.");
+             return;
+        }
+
+        try {
+            ReceiptDTO receiptData = sale.processPaymentAndGetReceiptDetails(paidAmount); 
+
+            printer.printReceipt(receiptData);
+
+            SaleInfoDTO saleInfoAccounting = sale.getSaleInfoForAccounting(); 
+
+            accSys.updateAccounting(saleInfoAccounting);
+
+            SaleInfoDTO saleInfoInventory = sale.getSaleInfoForInventory(); 
+
+            invSys.updateInventory(saleInfoInventory);
+
+            System.out.println("Controller: Payment processed successfully.");
+
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // Handle errors like insufficient payment or calling out of order
+            System.err.println("Controller ERROR during payment: " + e.getMessage());
+        }
     }
 
 }

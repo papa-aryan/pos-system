@@ -1,6 +1,8 @@
 package pos.view;
 
 import pos.controller.Controller;
+import pos.model.Amount; 
+
 
 /*
  * This is a placeholder for the View class in the POS system. It contains hardcoded 
@@ -48,15 +50,16 @@ public class View {
         contr.endSale(); 
         System.out.println("View: Fake sale execution finished.");
 
-        // TODO: Add calls for discounts, payment, and printing receipt later
+        // Example: Customer pays with 50.0
+        Amount amountPaid = new Amount(50.00);
+        makePayment(amountPaid); // Call the new makePayment method
+
+        System.out.println("View: Fake sale execution finished.");
     }
 
     /*
      * Private helper method to simulate a user entering item details.
      * Calls the controller's enterItem method.
-     *
-     * @param itemID The ID of the item entered.
-     * @param quantity The quantity of the item entered.
      */
     private void enterItem(int itemID, int quantity) {
         System.out.println("-------------------------------------"); // Separator
@@ -67,14 +70,23 @@ public class View {
     /*
      * Private helper method to simulate a user requesting a discount.
      * Calls the controller's requestDiscount method.
-     *
-     * @param customerID The ID of the customer.
      */
     private void requestDiscount(int customerID) {
         System.out.println("-------------------------------------"); // Separator
         System.out.println("View: Attempting to request discount for customer ID: " + customerID);
         contr.requestDiscount(customerID);
-        // TODO: Display discount application result from Controller later
+    }
+
+    /*
+     * Private helper method to simulate a user making a payment.
+     * Calls the controller's makePayment method.
+     *
+     * @param paidAmount The amount paid by the customer.
+     */
+    private void makePayment(Amount paidAmount) {
+        System.out.println("-------------------------------------"); // Separator
+        System.out.println("View: Attempting to make payment. Amount paid: " + paidAmount);
+        contr.makePayment(paidAmount);
     }
 
 }

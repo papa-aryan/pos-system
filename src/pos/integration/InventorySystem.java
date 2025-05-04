@@ -1,6 +1,7 @@
 package pos.integration;
 
 import pos.model.Amount;
+import pos.model.SaleInfoDTO;
 
 /*
  * Represents the external inventory system. (Placeholder)
@@ -37,5 +38,16 @@ public class InventorySystem {
         }
     }
 
-    // The updateInventory method from the class diagram is not needed for this sequence.
+    /*
+     * Updates the external inventory system based on the completed sale.
+     * (Placeholder implementation)
+     *
+     * @param saleInfoInventory A DTO containing information about the sold items.
+     */
+    public void updateInventory(SaleInfoDTO saleInfoInventory) {
+        System.out.println("InventorySystem: Received request to update inventory.");
+        System.out.println("InventorySystem: Items sold:");
+        saleInfoInventory.getItems().forEach(item -> System.out.println("  - " + item));
+        System.out.println("InventorySystem: Inventory update simulation complete.");
+    }
 }

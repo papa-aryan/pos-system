@@ -24,7 +24,7 @@ public final class DiscountInfoDTO {
         this.discountType = discountType;
     }
 
-    // --- Getters ---
+    // Getters
 
     public Amount getDiscountAmount() {
         return discountAmount;
