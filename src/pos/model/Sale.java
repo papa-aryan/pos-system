@@ -97,9 +97,8 @@ public class Sale {
 
     // Helper method to create SaleInfoDTO
     private SaleInfoDTO createSaleInfoDTO() {
-        List<String> itemStrings = this.items.stream()
-                                        .map(SaleItem::formatForDTO)
-                                        .collect(Collectors.toList());
+        List<String> itemStrings = getFormattedItemStrings(); 
+
         return new SaleInfoDTO(this.runningTotalBeforeTax, itemStrings, this.totalVAT);
     }
 
@@ -136,14 +135,22 @@ public class Sale {
         }
 
         if ("Percentage".equals(discountInfo.getDiscountType())) {
-            int discountPercentage = discountInfo.getDiscountPercentage();
-            double discountAmountValue = (this.runningTotalBeforeTax.getAmount() * discountPercentage) / 100.0; // Use 100.0 for double division
-            Amount discount = new Amount(discountAmountValue);
-            return this.runningTotalBeforeTax.minus(discount);
+            return calculateAfterPercentageDiscount(discountInfo.getDiscountPercentage());
         } else if ("Amount".equals(discountInfo.getDiscountType())) {
-            return this.runningTotalBeforeTax.minus(discountInfo.getDiscountAmount());
+            return calculateAfterAmountDiscount(discountInfo.getDiscountAmount());
         }
+        System.err.println("Sale WARNING: Unknown discount type encountered: " + discountInfo.getDiscountType());
         return this.runningTotalBeforeTax;
+    }
+
+    private Amount calculateAfterPercentageDiscount(int percentage) {
+        double discountFactor = (double) percentage / 100.0;
+        Amount discountAmount = new Amount(this.runningTotalBeforeTax.getAmount() * discountFactor);
+        return this.runningTotalBeforeTax.minus(discountAmount);
+    }
+
+    private Amount calculateAfterAmountDiscount(Amount discountAmount) {
+        return this.runningTotalBeforeTax.minus(discountAmount); 
     }
 
 
@@ -170,9 +177,7 @@ public class Sale {
      * @throws IllegalArgumentException if the paid amount is less than the total amount.
      */
     public ReceiptDTO processPaymentAndGetReceiptDetails(Amount paidAmount) {
-        if (this.finalTotalWithTax == null) {
-            throw new IllegalStateException("Cannot process payment before endSale is called and final total is calculated.");
-        }
+        ensureSaleIsEnded();
         System.out.println("Sale: Processing payment. Amount paid: " + paidAmount + ", Total due: " + this.finalTotalWithTax);
 
         this.amountPaidByCustomer = paidAmount;
@@ -181,6 +186,12 @@ public class Sale {
         System.out.println("Sale: Calculated change: " + this.changeToCustomer);
 
         return createReceiptDTO(); 
+    }
+
+    private void ensureSaleIsEnded() {
+        if (this.finalTotalWithTax == null) {
+            throw new IllegalStateException("Cannot process payment before endSale is called and final total is calculated.");
+        }
     }
 
     /*
@@ -192,24 +203,23 @@ public class Sale {
      * @throws IllegalArgumentException if paidAmount is less than finalTotalWithTax.
      */
     private Amount calculateChange(Amount paidAmount) {
-        // TODO: add a method for this: Ensure payment is sufficient
-        if (paidAmount.getAmount() < this.finalTotalWithTax.getAmount()) {
+        if (isPaymentInsufficient(paidAmount)) { 
              throw new IllegalArgumentException("Paid amount (" + paidAmount + ") is less than the total amount due (" + this.finalTotalWithTax + ").");
         }
         return paidAmount.minus(this.finalTotalWithTax);
     }
 
+    private boolean isPaymentInsufficient(Amount paidAmount) {
+        return paidAmount.getAmount() < this.finalTotalWithTax.getAmount();
+    }
+
     /*
      * Creates the ReceiptDTO containing all necessary information.
-     * Assumes payment has been processed and fields like finalTotalWithTax, amountPaidByCustomer, changeToCustomer are set.
-     *
-     * @return A populated ReceiptDTO.
      */
     private ReceiptDTO createReceiptDTO() {
         LocalDateTime saleCompleteTime = LocalDateTime.now(); 
-        List<String> itemStrings = this.items.stream()
-                                        .map(SaleItem::formatForDTO)
-                                        .collect(Collectors.toList());
+        List<String> itemStrings = getFormattedItemStrings(); 
+
 
         // TODO: Add discount info to receipt if needed
 
@@ -218,6 +228,12 @@ public class Sale {
                               this.finalTotalWithTax,
                               this.amountPaidByCustomer,
                               this.changeToCustomer);
+    }
+
+    private List<String> getFormattedItemStrings() {
+        return this.items.stream()
+                         .map(SaleItem::formatForDTO)
+                         .collect(Collectors.toList());
     }
 
     /*
