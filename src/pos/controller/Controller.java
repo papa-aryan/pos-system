@@ -57,13 +57,11 @@ public class Controller {
      */
     public void enterItem(int itemID, int quantity) {
 
-        if (sale == null) {
-            System.err.println("Controller ERROR: Cannot enter item before starting a sale."); // Good practice to log error
+        if (!isSaleStarted()) {
             return;
         }
     
-        if (quantity <= 0) {
-             System.err.println("Controller ERROR: Quantity must be positive. Item ID " + itemID + " NOT added.");
+        if (!isValidQuantity(quantity, itemID)) {
              return; 
         }
         
@@ -84,8 +82,7 @@ public class Controller {
      */
     public void requestDiscount(int customerID) {
         System.out.println("Controller: Received request for discount for customer ID: " + customerID);
-        if (sale == null) {
-            System.err.println("Controller ERROR: Cannot request discount before starting a sale.");
+        if (!isSaleStarted()) {
             return;
         }
 
@@ -105,8 +102,7 @@ public class Controller {
     public void endSale() {
         System.out.println("Controller: Received request to end sale.");
 
-        if (sale == null) {
-            System.err.println("Controller ERROR: Cannot end sale before starting one.");
+        if (!isSaleStarted()) {
             return;
         }
 
@@ -125,12 +121,10 @@ public class Controller {
      */
     public void makePayment(Amount paidAmount) {
         System.out.println("Controller: Received request to make payment. Amount: " + paidAmount);
-        if (sale == null) {
-            System.err.println("Controller ERROR: Cannot make payment before starting a sale.");
+        if (!isSaleStarted()) {
             return;
         }
-        if (sale.getFinalTotalWithTax() == null) {
-             System.err.println("Controller ERROR: Cannot make payment before endSale() is called.");
+        if (!isSaleEnded()) {
              return;
         }
 
@@ -154,6 +148,30 @@ public class Controller {
             System.err.println("Controller ERROR during payment: " + e.getMessage());
         }
     }
+
+    private boolean isSaleStarted() {
+        if (sale == null) {
+            System.err.println("Controller ERROR: Operation cannot be performed before starting a sale.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidQuantity(int quantity, int itemID) {
+        if (quantity <= 0) {
+             System.err.println("Controller ERROR: Quantity must be positive. Item ID " + itemID + " NOT processed.");
+             return false;
+        }
+        return true;
+    }
+    
+    private boolean isSaleEnded() {
+        if (sale.getFinalTotalWithTax() == null) {
+            System.err.println("Controller ERROR: Cannot make payment before endSale() is called.");
+            return false;
+       }
+       return true;
+   }
 
 }
 

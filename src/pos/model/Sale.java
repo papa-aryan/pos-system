@@ -67,15 +67,21 @@ public class Sale {
         SaleItem saleItem = new SaleItem(itemInfo, quantity);
         this.items.add(saleItem);
 
+        updateTotalsForItem(itemInfo, quantity); 
+    }
+
+    private void updateTotalsForItem(ItemDTO itemInfo, int quantity) {
         Amount itemPriceBeforeTax = itemInfo.getPrice();
+    
+        // Update running total
         Amount itemsTotalPrice = itemPriceBeforeTax.multiply(quantity);
         this.runningTotalBeforeTax = this.runningTotalBeforeTax.plus(itemsTotalPrice);
         System.out.println("Sale: Updated running total (pre-tax, pre-discount): " + this.runningTotalBeforeTax);
-
+    
+        // Update VAT
         calculateAndAddVAT(itemPriceBeforeTax, itemInfo.getTax(), quantity);
         System.out.println("Sale: Updated total VAT: " + this.totalVAT);
     }
-
 
     private void calculateAndAddVAT(Amount itemPriceBeforeTax, double taxPercentage, int quantity) {
         double taxRate = taxPercentage / 100.0;
@@ -134,13 +140,18 @@ public class Sale {
             return this.runningTotalBeforeTax;
         }
 
+        return applySpecificDiscount(discountInfo);
+    }
+
+    private Amount applySpecificDiscount(DiscountInfoDTO discountInfo) {
         if ("Percentage".equals(discountInfo.getDiscountType())) {
             return calculateAfterPercentageDiscount(discountInfo.getDiscountPercentage());
         } else if ("Amount".equals(discountInfo.getDiscountType())) {
             return calculateAfterAmountDiscount(discountInfo.getDiscountAmount());
+        } else {
+            System.err.println("Sale WARNING: Unknown discount type encountered: " + discountInfo.getDiscountType());
+            return this.runningTotalBeforeTax; 
         }
-        System.err.println("Sale WARNING: Unknown discount type encountered: " + discountInfo.getDiscountType());
-        return this.runningTotalBeforeTax;
     }
 
     private Amount calculateAfterPercentageDiscount(int percentage) {
