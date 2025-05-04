@@ -46,7 +46,7 @@ public class Controller {
      */
     public void startSale() {
         sale = new Sale();
-        System.out.println("Controller: Sale started.");
+        // System.out.println("Controller: Sale started.");
     }
 
     /*
@@ -70,7 +70,7 @@ public class Controller {
         if (itemInfo != null) {
             sale.addItem(itemInfo, quantity);
         } else {
-            System.err.println("Controller ERROR: Item ID " + itemID + " not found in inventory. Item NOT added to sale.");
+            // System.err.println("Controller ERROR: Item ID " + itemID + " not found in inventory. Item NOT added to sale.");
         }
     }
 
@@ -81,7 +81,7 @@ public class Controller {
      * @param customerID The ID of the customer requesting the discount.
      */
     public void requestDiscount(int customerID) {
-        System.out.println("Controller: Received request for discount for customer ID: " + customerID);
+        // System.out.println("Controller: Received request for discount for customer ID: " + customerID);
         if (!isSaleStarted()) {
             return;
         }
@@ -92,7 +92,7 @@ public class Controller {
 
         sale.applyDiscount(discountInfo);
 
-        System.out.println("Controller: Discount request processed.");
+        // System.out.println("Controller: Discount request processed.");
     }
 
     /*
@@ -100,7 +100,7 @@ public class Controller {
      * (Further steps like payment and receipt printing would follow).
      */
     public void endSale() {
-        System.out.println("Controller: Received request to end sale.");
+        // System.out.println("Controller: Received request to end sale.");
 
         if (!isSaleStarted()) {
             return;
@@ -108,7 +108,8 @@ public class Controller {
 
         Amount finalTotal = sale.calculateAndGetFinalTotal(); 
 
-        System.out.println("Controller: Sale ended. Final total (incl. tax): " + finalTotal);
+        System.out.println("\nEnd sale:");
+        System.out.println("Total cost (incl VAT): " + finalTotal);
     }
 
      /*
@@ -120,7 +121,7 @@ public class Controller {
      * @param paidAmount The amount of money paid by the customer.
      */
     public void makePayment(Amount paidAmount) {
-        System.out.println("Controller: Received request to make payment. Amount: " + paidAmount);
+        // System.out.println("Controller: Received request to make payment. Amount: " + paidAmount);
         if (!isSaleStarted()) {
             return;
         }
@@ -141,17 +142,17 @@ public class Controller {
 
             invSys.updateInventory(saleInfoInventory);
 
-            System.out.println("Controller: Payment processed successfully.");
+            // System.out.println("Controller: Payment processed successfully.");
 
         } catch (IllegalArgumentException | IllegalStateException e) {
             // Handle errors like insufficient payment or calling out of order
-            System.err.println("Controller ERROR during payment: " + e.getMessage());
+            // System.err.println("Controller ERROR during payment: " + e.getMessage());
         }
     }
 
     private boolean isSaleStarted() {
         if (sale == null) {
-            System.err.println("Controller ERROR: Operation cannot be performed before starting a sale.");
+            // System.err.println("Controller ERROR: Operation cannot be performed before starting a sale.");
             return false;
         }
         return true;
@@ -159,7 +160,7 @@ public class Controller {
 
     private boolean isValidQuantity(int quantity, int itemID) {
         if (quantity <= 0) {
-             System.err.println("Controller ERROR: Quantity must be positive. Item ID " + itemID + " NOT processed.");
+             // System.err.println("Controller ERROR: Quantity must be positive. Item ID " + itemID + " NOT processed.");
              return false;
         }
         return true;
@@ -167,11 +168,24 @@ public class Controller {
     
     private boolean isSaleEnded() {
         if (sale.getFinalTotalWithTax() == null) {
-            System.err.println("Controller ERROR: Cannot make payment before endSale() is called.");
+            // System.err.println("Controller ERROR: Cannot make payment before endSale() is called.");
             return false;
        }
        return true;
    }
+
+    /*
+     * Gets the calculated change amount from the current sale.
+     *
+     * @return The change amount, or zero if sale is not available or change not calculated.
+     */
+    public Amount getChange() {
+        if (isSaleStarted()) {
+            return sale.getChange();
+        } else {
+            return new Amount(0);
+        }
+    }
 
 }
 

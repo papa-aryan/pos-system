@@ -25,7 +25,7 @@ public class View {
      */
     public void runFakeExecution() {
 
-        System.out.println("View: Starting fake execution of sale...");
+        // System.out.println("View: Starting fake execution of sale...");
         contr.startSale(); 
 
         // Simulate entering item 101 (should be found)
@@ -48,13 +48,14 @@ public class View {
         requestDiscount(5678);
 
         contr.endSale(); 
-        System.out.println("View: Fake sale execution finished.");
+        // System.out.println("View: Fake sale execution finished.");
 
         // Example: Customer pays with 50.0
         Amount amountPaid = new Amount(50.00);
         makePayment(amountPaid); // Call the new makePayment method
+        System.out.println("Change to give the customer: " + contr.getChange());
 
-        System.out.println("View: Fake sale execution finished.");
+        // System.out.println("View: Fake sale execution finished.");
     }
 
     /*
@@ -62,8 +63,8 @@ public class View {
      * Calls the controller's enterItem method.
      */
     private void enterItem(int itemID, int quantity) {
-        System.out.println("-------------------------------------"); // Separator
-        System.out.println("View: Attempting to enter item ID: " + itemID + ", Quantity: " + quantity);
+        System.out.println(); // Separator
+        System.out.println("Add " + quantity + " item(s) with item id " + itemID + ":");
         contr.enterItem(itemID, quantity);
     }
 
@@ -72,8 +73,8 @@ public class View {
      * Calls the controller's requestDiscount method.
      */
     private void requestDiscount(int customerID) {
-        System.out.println("-------------------------------------"); // Separator
-        System.out.println("View: Attempting to request discount for customer ID: " + customerID);
+        System.out.println(); // Separator
+        System.out.println("Request discount for customer ID: " + customerID);
         contr.requestDiscount(customerID);
     }
 
@@ -84,8 +85,8 @@ public class View {
      * @param paidAmount The amount paid by the customer.
      */
     private void makePayment(Amount paidAmount) {
-        System.out.println("-------------------------------------"); // Separator
-        System.out.println("View: Attempting to make payment. Amount paid: " + paidAmount);
+        System.out.println(); // Separator
+        System.out.println("Pay: " + paidAmount);
         contr.makePayment(paidAmount);
     }
 

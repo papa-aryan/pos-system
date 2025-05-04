@@ -13,11 +13,11 @@ public class AccountingSystem {
      * @param saleInfoAccounting A DTO containing financial information about the sale.
      */
     public void updateAccounting(SaleInfoDTO saleInfoAccounting) {
-        System.out.println("AccountingSystem: Received request to update accounting.");
-        System.out.println("AccountingSystem: Sale details:");
-        System.out.println("  - Running Total (at time of logging): " + saleInfoAccounting.getRunningTotal());
-        System.out.println("  - Total VAT: " + saleInfoAccounting.getTotalVAT());
-        // In a real system, this would record the transaction details.
-        System.out.println("AccountingSystem: Accounting update simulation complete.");
+        // System.out.println("AccountingSystem: Received request to update accounting.");
+        // System.out.println("AccountingSystem: Sale details:");
+        // System.out.println("  - Running Total (at time of logging): " + saleInfoAccounting.getRunningTotal());
+        // System.out.println("  - Total VAT: " + saleInfoAccounting.getTotalVAT());
+        // // In a real system, this would record the transaction details.
+        // System.out.println("AccountingSystem: Accounting update simulation complete.");
     }
 }

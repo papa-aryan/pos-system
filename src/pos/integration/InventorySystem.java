@@ -22,18 +22,18 @@ public class InventorySystem {
             String description = "Coffee";
             Amount price = new Amount(15.00);
             int tax = 25; // 25%
-            System.out.println("InventorySystem: Found item " + itemID);
+            // System.out.println("InventorySystem: Found item " + itemID);
             return new ItemDTO(itemID, price, tax, description);
 
         } else if (itemID == 102) {
             String description = "Croissant";
             Amount price = new Amount(2.50);
             int tax = 12; // 12%
-            System.out.println("InventorySystem: Found item " + itemID);
+            // System.out.println("InventorySystem: Found item " + itemID);
             return new ItemDTO(itemID, price, tax, description);
 
         } else {
-            System.out.println("InventorySystem: Item ID " + itemID + " not found.");
+            // System.out.println("InventorySystem: Item ID " + itemID + " not found.");
             return null; 
         }
     }
@@ -45,9 +45,9 @@ public class InventorySystem {
      * @param saleInfoInventory A DTO containing information about the sold items.
      */
     public void updateInventory(SaleInfoDTO saleInfoInventory) {
-        System.out.println("InventorySystem: Received request to update inventory.");
-        System.out.println("InventorySystem: Items sold:");
-        saleInfoInventory.getItems().forEach(item -> System.out.println("  - " + item));
-        System.out.println("InventorySystem: Inventory update simulation complete.");
+        // System.out.println("InventorySystem: Received request to update inventory.");
+        // System.out.println("InventorySystem: Items sold:");
+        // saleInfoInventory.getItems().forEach(item -> System.out.println("  - " + item));
+        // System.out.println("InventorySystem: Inventory update simulation complete.");
     }
 }

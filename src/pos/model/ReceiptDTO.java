@@ -1,6 +1,7 @@
 package pos.model;
 
 import java.time.LocalDateTime; 
+import java.time.format.DateTimeFormatter; // Import formatter
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public final class ReceiptDTO {
      * Creates a new instance of ReceiptDTO.
      *
      * @param dateTime The date and time of the sale completion.
-     * @param items A list representing the items sold.
+     * @param items A list representing the items sold (using format from SaleItem.formatForDTO).
      * @param totalAmount The final total amount for the sale.
      * @param amountPaid The amount paid by the customer.
      * @param change The change given back to the customer.
@@ -53,14 +54,39 @@ public final class ReceiptDTO {
         return change;
     }
 
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Receipt Time: ").append(dateTime).append("\n");
+        // Format date and time like the example
+        builder.append("Time of Sale: ").append(dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))).append("\n\n");
+
+        // Parse the item strings to format them like the example
+        for (String itemLine : items) {
+            // Example itemLine: "Coffee (Qty: 2, Price: 15,00, Tax: 25%)"
+            try {
+                String name = itemLine.substring(0, itemLine.indexOf(" (Qty:"));
+                String qtyStr = itemLine.substring(itemLine.indexOf("Qty: ") + 5, itemLine.indexOf(", Price:"));
+                String priceStr = itemLine.substring(itemLine.indexOf("Price: ") + 7, itemLine.indexOf(", Tax:"));
+                // Assuming priceStr uses comma decimal separator, replace with dot for parsing
+                Amount price = new Amount(Double.parseDouble(priceStr.replace(",", ".")));
+                int qty = Integer.parseInt(qtyStr);
+                Amount lineTotal = price.multiply(qty);
+                // Format: Item Name Qty x PricePerUnit LineTotal
+                builder.append(String.format("%s %d x %s %s\n", name, qty, price, lineTotal));
+            } catch (Exception e) {
+                // Fallback if parsing fails, print the original string
+                builder.append(itemLine).append("\n");
+                // Optionally log the parsing error: System.err.println("Error parsing receipt item line: " + itemLine + " - " + e.getMessage());
+            }
+        }
+        builder.append("\n");
+
         builder.append("Total: ").append(totalAmount).append("\n");
-        builder.append("Paid: ").append(amountPaid).append("\n");
+        // Omit separate VAT line as discussed to avoid major structural changes
+        builder.append("\n");
+        builder.append("Cash: ").append(amountPaid).append("\n"); // Assuming "Cash" as payment method label
         builder.append("Change: ").append(change).append("\n");
-        builder.append("Items:\n");
-        items.forEach(item -> builder.append("  ").append(item).append("\n"));
+
         return builder.toString();
     }
 }

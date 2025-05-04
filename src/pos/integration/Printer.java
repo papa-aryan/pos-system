@@ -13,9 +13,9 @@ public class Printer {
      * @param receiptData The DTO containing all information for the receipt.
      */
     public void printReceipt(ReceiptDTO receiptData) {
-        System.out.println("-------------------- RECEIPT START --------------------");
         System.out.println("Printing receipt...");
+        System.out.println("\n-------------------- RECEIPT START --------------------\n");
         System.out.println(receiptData.toString());
-        System.out.println("-------------------- RECEIPT END ----------------------");
+        System.out.println("-------------------- RECEIPT END ----------------------\n");
     }
 }
