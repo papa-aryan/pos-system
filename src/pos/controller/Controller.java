@@ -129,7 +129,8 @@ public class Controller {
              return;
         }
 
-        try {
+        // TODO: saved try...catch for seminar 4
+    //    try {
             ReceiptDTO receiptData = sale.processPaymentAndGetReceiptDetails(paidAmount); 
 
             printer.printReceipt(receiptData);
@@ -144,10 +145,10 @@ public class Controller {
 
             // System.out.println("Controller: Payment processed successfully.");
 
-        } catch (IllegalArgumentException | IllegalStateException e) {
+    //    } catch (IllegalArgumentException | IllegalStateException e) {
             // Handle errors like insufficient payment or calling out of order
             // System.err.println("Controller ERROR during payment: " + e.getMessage());
-        }
+    //    }
     }
 
     private boolean isSaleStarted() {

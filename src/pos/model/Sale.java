@@ -197,7 +197,7 @@ public class Sale {
      * @param paidAmount The amount of money received from the customer.
      * @return A ReceiptDTO containing all details for the receipt.
      * @throws IllegalStateException if the final total hasn't been calculated yet (endSale not called).
-     * @throws IllegalArgumentException if the paid amount is less than the total amount.
+     * TODO: @throws IllegalArgumentException if the paid amount is less than the total amount.
      */
     public ReceiptDTO processPaymentAndGetReceiptDetails(Amount paidAmount) {
         ensureSaleIsEnded();
@@ -213,7 +213,8 @@ public class Sale {
 
     private void ensureSaleIsEnded() {
         if (this.finalTotalWithTax == null) {
-            throw new IllegalStateException("Cannot process payment before endSale is called and final total is calculated.");
+            // TODO: saved exception for seminar 4
+            // throw new IllegalStateException("Cannot process payment before endSale is called and final total is calculated.");
         }
     }
 
@@ -227,7 +228,8 @@ public class Sale {
      */
     private Amount calculateChange(Amount paidAmount) {
         if (isPaymentInsufficient(paidAmount)) { 
-             throw new IllegalArgumentException("Paid amount (" + paidAmount + ") is less than the total amount due (" + this.finalTotalWithTax + ").");
+            // TODO: saved exception for seminar 4
+            //throw new IllegalArgumentException("Paid amount (" + paidAmount + ") is less than the total amount due (" + this.finalTotalWithTax + ").");
         }
         return paidAmount.minus(this.finalTotalWithTax);
     }

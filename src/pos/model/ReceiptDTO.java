@@ -54,7 +54,6 @@ public final class ReceiptDTO {
         return change;
     }
 
-    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         // Format date and time like the example
@@ -63,7 +62,8 @@ public final class ReceiptDTO {
         // Parse the item strings to format them like the example
         for (String itemLine : items) {
             // Example itemLine: "Coffee (Qty: 2, Price: 15,00, Tax: 25%)"
-            try {
+            // TODO: try...catch saved seminar 4
+    //        try {
                 String name = itemLine.substring(0, itemLine.indexOf(" (Qty:"));
                 String qtyStr = itemLine.substring(itemLine.indexOf("Qty: ") + 5, itemLine.indexOf(", Price:"));
                 String priceStr = itemLine.substring(itemLine.indexOf("Price: ") + 7, itemLine.indexOf(", Tax:"));
@@ -73,11 +73,11 @@ public final class ReceiptDTO {
                 Amount lineTotal = price.multiply(qty);
                 // Format: Item Name Qty x PricePerUnit LineTotal
                 builder.append(String.format("%s %d x %s %s\n", name, qty, price, lineTotal));
-            } catch (Exception e) {
+    //        } catch (Exception e) {
                 // Fallback if parsing fails, print the original string
                 builder.append(itemLine).append("\n");
                 // Optionally log the parsing error: System.err.println("Error parsing receipt item line: " + itemLine + " - " + e.getMessage());
-            }
+    //        }
         }
         builder.append("\n");
 
