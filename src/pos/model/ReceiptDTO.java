@@ -59,34 +59,37 @@ public final class ReceiptDTO {
         // Format date and time like the example
         builder.append("Time of Sale: ").append(dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))).append("\n\n");
 
-        // Parse the item strings to format them like the example
         for (String itemLine : items) {
-            // Example itemLine: "Coffee (Qty: 2, Price: 15,00, Tax: 25%)"
-            // TODO: try...catch saved seminar 4
-    //        try {
-                String name = itemLine.substring(0, itemLine.indexOf(" (Qty:"));
-                String qtyStr = itemLine.substring(itemLine.indexOf("Qty: ") + 5, itemLine.indexOf(", Price:"));
-                String priceStr = itemLine.substring(itemLine.indexOf("Price: ") + 7, itemLine.indexOf(", Tax:"));
-                // Assuming priceStr uses comma decimal separator, replace with dot for parsing
-                Amount price = new Amount(Double.parseDouble(priceStr.replace(",", ".")));
-                int qty = Integer.parseInt(qtyStr);
-                Amount lineTotal = price.multiply(qty);
-                // Format: Item Name Qty x PricePerUnit LineTotal
-                builder.append(String.format("%s %d x %s %s\n", name, qty, price, lineTotal));
-    //        } catch (Exception e) {
-                // Fallback if parsing fails, print the original string
-                builder.append(itemLine).append("\n");
-                // Optionally log the parsing error: System.err.println("Error parsing receipt item line: " + itemLine + " - " + e.getMessage());
-    //        }
+            builder.append(formatItemLine(itemLine)); 
         }
         builder.append("\n");
 
         builder.append("Total: ").append(totalAmount).append("\n");
-        // Omit separate VAT line as discussed to avoid major structural changes
         builder.append("\n");
-        builder.append("Cash: ").append(amountPaid).append("\n"); // Assuming "Cash" as payment method label
+        builder.append("Cash: ").append(amountPaid).append("\n"); 
         builder.append("Change: ").append(change).append("\n");
 
         return builder.toString();
     }
+
+    private String formatItemLine(String itemLine) {
+        // Example itemLine: "Coffee (Qty: 2, Price: 15,00, Tax: 25%)"
+        // TODO: try...catch saved seminar 4
+//        try {
+            String name = itemLine.substring(0, itemLine.indexOf(" (Qty:"));
+            String qtyStr = itemLine.substring(itemLine.indexOf("Qty: ") + 5, itemLine.indexOf(", Price:"));
+            String priceStr = itemLine.substring(itemLine.indexOf("Price: ") + 7, itemLine.indexOf(", Tax:"));
+            // Assuming priceStr uses comma decimal separator, replace with dot for parsing
+            Amount price = new Amount(Double.parseDouble(priceStr.replace(",", ".")));
+            int qty = Integer.parseInt(qtyStr);
+            Amount lineTotal = price.multiply(qty);
+            // Format: Item Name Qty x PricePerUnit LineTotal
+            return String.format("%s %d x %s %s\n", name, qty, price, lineTotal);
+//        } catch (Exception e) {
+            // Fallback if parsing fails, print the original string
+            // Optionally log the parsing error: System.err.println("Error parsing receipt item line: " + itemLine + " - " + e.getMessage());
+            // return itemLine + "\n"; // Return original line with newline in case of error
+//        }
+    }
+
 }

@@ -50,7 +50,6 @@ public class View {
         contr.endSale(); 
         // System.out.println("View: Fake sale execution finished.");
 
-        // Example: Customer pays with 50.0
         Amount amountPaid = new Amount(50.00);
         makePayment(amountPaid); // Call the new makePayment method
         System.out.println("Change to give the customer: " + contr.getChange());

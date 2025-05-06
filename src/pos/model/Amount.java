@@ -75,11 +75,28 @@ public final class Amount {
      * @param The object to compare with.
      * @return true if the object is an Amount with the same value, false otherwise.
      */
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Amount other = (Amount) o;
-        return Double.compare(other.amount, amount) == 0;
+    public boolean equals(Object obj) {
+        if (isSameValue(obj)) {
+            return true;
+        }
+        if (isDifferentTypeOrNull(obj)) {
+            return false;
+        }        
+        Amount other = (Amount) obj;
+        return hasSameNumericValue(other);
+    }
+
+    private boolean isSameValue(Object obj) {
+        return obj == this;
+    }
+    
+    private boolean isDifferentTypeOrNull(Object obj) {
+        return obj == null || getClass() != obj.getClass();
+    }
+
+    private boolean hasSameNumericValue(Amount other) {
+        // 'other' is guaranteed to be non-null and of type Amount here
+        return Double.compare(other.amount, this.amount) == 0;
     }
 
     /*

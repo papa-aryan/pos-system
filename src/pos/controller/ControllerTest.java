@@ -172,7 +172,7 @@ public class ControllerTest {
      @Test
     void testMakePaymentWithInsufficientAmount() {
         instanceToTest.startSale();
-        instanceToTest.enterItem(101, 1); // Total is 18.75
+        instanceToTest.enterItem(101, 1); 
         instanceToTest.endSale();
         Amount insufficientPaidAmount = new Amount(10.0);
 
