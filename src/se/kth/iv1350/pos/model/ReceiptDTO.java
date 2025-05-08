@@ -1,4 +1,4 @@
-package pos.model;
+package se.kth.iv1350.pos.model;
 
 import java.time.LocalDateTime; 
 import java.time.format.DateTimeFormatter; // Import formatter

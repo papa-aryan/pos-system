@@ -1,9 +1,9 @@
-package pos.model;
+package se.kth.iv1350.pos.model;
 
 import java.time.LocalTime;
 import java.time.LocalDateTime; 
-import pos.integration.ItemDTO;
-import pos.integration.DiscountInfoDTO;
+import se.kth.iv1350.pos.integration.ItemDTO;
+import se.kth.iv1350.pos.integration.DiscountInfoDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,6 @@ public class Sale {
 
         // Helper method to format item for DTOs/internal use
         String formatForDTO() {
-             // This format is used by ReceiptDTO parsing, keep it consistent or update parsing
             return String.format("%s (Qty: %d, Price: %s, Tax: %d%%)",
                                  itemInfo.getDescription(),
                                  quantity,

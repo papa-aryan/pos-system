@@ -1,12 +1,12 @@
-package pos.startup;
+package se.kth.iv1350.pos.startup;
 
-import pos.controller.Controller;
-import pos.view.View;
+import se.kth.iv1350.pos.controller.Controller;
+import se.kth.iv1350.pos.view.View;
 
-import pos.integration.AccountingSystem;
-import pos.integration.DiscountDatabase;
-import pos.integration.InventorySystem;
-import pos.integration.Printer;
+import se.kth.iv1350.pos.integration.AccountingSystem;
+import se.kth.iv1350.pos.integration.DiscountDatabase;
+import se.kth.iv1350.pos.integration.InventorySystem;
+import se.kth.iv1350.pos.integration.Printer;
 
 /*
  * This class starts the application. 

@@ -1,6 +1,6 @@
-package pos.integration;
+package se.kth.iv1350.pos.integration;
 
-import pos.model.ReceiptDTO;
+import se.kth.iv1350.pos.model.ReceiptDTO;
 
 /*
  * Represents the printer hardware.

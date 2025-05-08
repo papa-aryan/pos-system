@@ -1,10 +1,10 @@
-package pos.controller;
+package se.kth.iv1350.pos.controller;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pos.integration.*; 
-import pos.model.Amount; 
+import se.kth.iv1350.pos.integration.*; 
+import se.kth.iv1350.pos.model.Amount; 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ControllerTest {

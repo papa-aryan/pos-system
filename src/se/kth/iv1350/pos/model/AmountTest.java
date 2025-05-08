@@ -1,4 +1,4 @@
-package pos.model;
+package se.kth.iv1350.pos.model;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,10 +1,10 @@
-package pos.integration;
+package se.kth.iv1350.pos.integration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pos.model.Amount;
-import pos.model.SaleInfoDTO; 
+import se.kth.iv1350.pos.model.Amount;
+import se.kth.iv1350.pos.model.SaleInfoDTO; 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;

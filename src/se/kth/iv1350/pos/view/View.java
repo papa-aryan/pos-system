@@ -1,7 +1,7 @@
-package pos.view;
+package se.kth.iv1350.pos.view;
 
-import pos.controller.Controller;
-import pos.model.Amount; 
+import se.kth.iv1350.pos.controller.Controller;
+import se.kth.iv1350.pos.model.Amount; 
 
 
 /*

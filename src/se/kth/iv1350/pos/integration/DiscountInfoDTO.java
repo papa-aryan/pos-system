@@ -1,6 +1,6 @@
-package pos.integration;
+package se.kth.iv1350.pos.integration;
 
-import pos.model.Amount;
+import se.kth.iv1350.pos.model.Amount;
 
 /*
  * Represents discount information retrieved from the DiscountDatabase.

@@ -1,6 +1,6 @@
-package pos.integration;
+package se.kth.iv1350.pos.integration;
 
-import pos.model.SaleInfoDTO; 
+import se.kth.iv1350.pos.model.SaleInfoDTO; 
 
 /*
  * Represents the external accounting system.

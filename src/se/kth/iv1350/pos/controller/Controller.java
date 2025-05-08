@@ -1,15 +1,15 @@
-package pos.controller;
+package se.kth.iv1350.pos.controller;
 
-import pos.integration.AccountingSystem;
-import pos.integration.DiscountDatabase;
-import pos.integration.InventorySystem;
-import pos.integration.Printer;
-import pos.integration.ItemDTO;
-import pos.model.Sale;
-import pos.model.SaleInfoDTO;
-import pos.integration.DiscountInfoDTO;
-import pos.model.Amount;
-import pos.model.ReceiptDTO;
+import se.kth.iv1350.pos.integration.AccountingSystem;
+import se.kth.iv1350.pos.integration.DiscountDatabase;
+import se.kth.iv1350.pos.integration.InventorySystem;
+import se.kth.iv1350.pos.integration.Printer;
+import se.kth.iv1350.pos.integration.ItemDTO;
+import se.kth.iv1350.pos.model.Sale;
+import se.kth.iv1350.pos.model.SaleInfoDTO;
+import se.kth.iv1350.pos.integration.DiscountInfoDTO;
+import se.kth.iv1350.pos.model.Amount;
+import se.kth.iv1350.pos.model.ReceiptDTO;
 
 
 /*
@@ -46,7 +46,6 @@ public class Controller {
      */
     public void startSale() {
         sale = new Sale();
-        // System.out.println("Controller: Sale started.");
     }
 
     /*

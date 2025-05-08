@@ -1,10 +1,10 @@
-package pos.model;
+package se.kth.iv1350.pos.model;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pos.integration.DiscountInfoDTO; 
-import pos.integration.ItemDTO;
+import se.kth.iv1350.pos.integration.DiscountInfoDTO; 
+import se.kth.iv1350.pos.integration.ItemDTO;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SaleTest {
