@@ -1,7 +1,7 @@
 package se.kth.iv1350.pos.model;
 
 import java.time.LocalDateTime; 
-import java.time.format.DateTimeFormatter; // Import formatter
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +56,7 @@ public final class ReceiptDTO {
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        // Format date and time like the example
+
         builder.append("Time of Sale: ").append(dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))).append("\n\n");
 
         for (String itemLine : items) {
@@ -73,23 +73,17 @@ public final class ReceiptDTO {
     }
 
     private String formatItemLine(String itemLine) {
-        // Example itemLine: "Coffee (Qty: 2, Price: 15,00, Tax: 25%)"
-        // TODO: try...catch saved seminar 4
-//        try {
-            String name = itemLine.substring(0, itemLine.indexOf(" (Qty:"));
-            String qtyStr = itemLine.substring(itemLine.indexOf("Qty: ") + 5, itemLine.indexOf(", Price:"));
-            String priceStr = itemLine.substring(itemLine.indexOf("Price: ") + 7, itemLine.indexOf(", Tax:"));
-            // Assuming priceStr uses comma decimal separator, replace with dot for parsing
-            Amount price = new Amount(Double.parseDouble(priceStr.replace(",", ".")));
-            int qty = Integer.parseInt(qtyStr);
-            Amount lineTotal = price.multiply(qty);
-            // Format: Item Name Qty x PricePerUnit LineTotal
-            return String.format("%s %d x %s %s\n", name, qty, price, lineTotal);
-//        } catch (Exception e) {
-            // Fallback if parsing fails, print the original string
-            // Optionally log the parsing error: System.err.println("Error parsing receipt item line: " + itemLine + " - " + e.getMessage());
-            // return itemLine + "\n"; // Return original line with newline in case of error
-//        }
+        // TODO: add try...catch in seminar 4
+
+        String name = itemLine.substring(0, itemLine.indexOf(" (Qty:"));
+        String qtyStr = itemLine.substring(itemLine.indexOf("Qty: ") + 5, itemLine.indexOf(", Price:"));
+        String priceStr = itemLine.substring(itemLine.indexOf("Price: ") + 7, itemLine.indexOf(", Tax:"));
+
+        Amount price = new Amount(Double.parseDouble(priceStr.replace(",", ".")));
+        int qty = Integer.parseInt(qtyStr);
+        Amount lineTotal = price.multiply(qty);
+
+        return String.format("%s %d x %s %s\n", name, qty, price, lineTotal);
     }
 
 }

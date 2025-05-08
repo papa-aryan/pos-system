@@ -95,7 +95,6 @@ public final class Amount {
     }
 
     private boolean hasSameNumericValue(Amount other) {
-        // 'other' is guaranteed to be non-null and of type Amount here
         return Double.compare(other.amount, this.amount) == 0;
     }
 

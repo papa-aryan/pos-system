@@ -60,10 +60,6 @@ public class Sale {
      * @param quantity The quantity of the item to add.
      */
     public void addItem(ItemDTO itemInfo, int quantity) {
-        // System.out.println("Sale: Received call to add item: ID=" + itemInfo.getItemID() +
-        //                    ", Desc='" + itemInfo.getDescription() + "'" +
-        //                    ", Qty=" + quantity);
-
         SaleItem saleItem = new SaleItem(itemInfo, quantity);
         this.items.add(saleItem);
 
@@ -74,23 +70,13 @@ public class Sale {
         Amount itemPriceBeforeTax = itemInfo.getPrice();
     
         // Update running total
+        // TODO: turn upDateRunningTotal into a helper method for clarification.
         Amount itemsTotalPrice = itemPriceBeforeTax.multiply(quantity);
         this.runningTotalBeforeTax = this.runningTotalBeforeTax.plus(itemsTotalPrice);
-        // System.out.println("Sale: Updated running total (pre-tax, pre-discount): " + this.runningTotalBeforeTax);
     
-        // Update VAT
         calculateAndAddVAT(itemPriceBeforeTax, itemInfo.getTax(), quantity);
-        // System.out.println("Sale: Updated total VAT: " + this.totalVAT);
 
-        // Print structured item info and running totals
-        System.out.println("Item ID: " + itemInfo.getItemID());
-        System.out.println("Item name: " + itemInfo.getDescription());
-        System.out.println("Item cost: " + itemInfo.getPrice()); 
-        System.out.println("VAT: " + (int)itemInfo.getTax() + "%");
-        System.out.println(); // Blank line
         Amount currentTotalInclVAT = this.runningTotalBeforeTax.plus(this.totalVAT);
-        System.out.println("Total cost (incl VAT): " + currentTotalInclVAT);
-        System.out.println("Total VAT: " + this.totalVAT);
     }
 
     private void calculateAndAddVAT(Amount itemPriceBeforeTax, double taxPercentage, int quantity) {
@@ -107,8 +93,7 @@ public class Sale {
      * @return A SaleInfoDTO containing relevant sale data.
      */
     public SaleInfoDTO getSaleInfoForDiscount() { // Renamed for clarity, used by multiple callers now
-        // System.out.println("Sale: Generating SaleInfoDTO. Current running total: " + this.runningTotalBeforeTax + ", VAT: " + this.totalVAT);
-        return createSaleInfoDTO(); // Use helper method
+        return createSaleInfoDTO(); 
     }
 
     // Helper method to create SaleInfoDTO
@@ -127,20 +112,12 @@ public class Sale {
      */
     public void applyDiscount(DiscountInfoDTO discountInfo) {
         if (discountInfo != null) {
-            // System.out.println("Sale: Applying discount: Type=" + discountInfo.getDiscountType() +
-            //                    ", Percentage=" + discountInfo.getDiscountPercentage() + "%" +
-            //                    ", Amount=" + discountInfo.getDiscountAmount());
-
             Amount totalBeforeDiscount = this.runningTotalBeforeTax; 
             Amount totalAfterDiscount = calculateTotalAfterDiscount(discountInfo);
-            // System.out.println("Sale: Original running total: " + totalBeforeDiscount);
-            // System.out.println("Sale: Calculated total after discount: " + totalAfterDiscount);
 
             this.runningTotalBeforeTax = totalAfterDiscount;
-            System.out.println("Discount applied."); // Simple confirmation
-
         } else {
-            // System.out.println("Sale: No discount to apply.");
+            // No discount to apply, do nothing.
         }
     }
 
@@ -160,7 +137,6 @@ public class Sale {
         } else if ("Amount".equals(discountInfo.getDiscountType())) {
             return calculateAfterAmountDiscount(discountInfo.getDiscountAmount());
         } else {
-            // System.err.println("Sale WARNING: Unknown discount type encountered: " + discountInfo.getDiscountType());
             return this.runningTotalBeforeTax; 
         }
     }
@@ -184,8 +160,7 @@ public class Sale {
      */
     public Amount calculateAndGetFinalTotal() {
         this.finalTotalWithTax = this.runningTotalBeforeTax.plus(this.totalVAT);
-        // System.out.println("Sale: Calculating final total: Running Total (after discount) " + this.runningTotalBeforeTax +
-        //                    " + Total VAT " + this.totalVAT + " = Final Total " + this.finalTotalWithTax);
+
         return this.finalTotalWithTax;
     }
 
@@ -200,20 +175,16 @@ public class Sale {
      */
     public ReceiptDTO processPaymentAndGetReceiptDetails(Amount paidAmount) {
         ensureSaleIsEnded();
-        // System.out.println("Sale: Processing payment. Amount paid: " + paidAmount + ", Total due: " + this.finalTotalWithTax);
 
         this.amountPaidByCustomer = paidAmount;
         this.changeToCustomer = calculateChange(paidAmount); 
-
-        // System.out.println("Sale: Calculated change: " + this.changeToCustomer);
 
         return createReceiptDTO(); 
     }
 
     private void ensureSaleIsEnded() {
         if (this.finalTotalWithTax == null) {
-            // TODO: saved exception for seminar 4
-            // throw new IllegalStateException("Cannot process payment before endSale is called and final total is calculated.");
+            // TODO: throw IllegalStateException for seminar 4
         }
     }
 
@@ -227,8 +198,7 @@ public class Sale {
      */
     private Amount calculateChange(Amount paidAmount) {
         if (isPaymentInsufficient(paidAmount)) { 
-            // TODO: saved exception for seminar 4
-            //throw new IllegalArgumentException("Paid amount (" + paidAmount + ") is less than the total amount due (" + this.finalTotalWithTax + ").");
+            // TODO: throw IllegalArgumentException for seminar 4
         }
         return paidAmount.minus(this.finalTotalWithTax);
     }
@@ -244,8 +214,6 @@ public class Sale {
         LocalDateTime saleCompleteTime = LocalDateTime.now(); 
         List<String> itemStrings = getFormattedItemStrings(); 
 
-        // TODO: Add discount info to receipt if needed
-
         return new ReceiptDTO(saleCompleteTime,
                               itemStrings,
                               this.finalTotalWithTax,
@@ -255,7 +223,7 @@ public class Sale {
 
     private List<String> getFormattedItemStrings() {
         return this.items.stream()
-                         .map(SaleItem::formatForDTO) // Use the existing formatForDTO
+                         .map(SaleItem::formatForDTO) 
                          .collect(Collectors.toList());
     }
 
@@ -266,7 +234,6 @@ public class Sale {
      * @return A SaleInfoDTO containing relevant accounting data.
      */
     public SaleInfoDTO getSaleInfoForAccounting() {
-        // System.out.println("Sale: Generating SaleInfoDTO for Accounting update.");
         return createSaleInfoDTO(); 
     }
 
@@ -277,7 +244,6 @@ public class Sale {
      * @return A SaleInfoDTO containing relevant inventory data (e.g., items sold).
      */
     public SaleInfoDTO getSaleInfoForInventory() {
-        // System.out.println("Sale: Generating SaleInfoDTO for Inventory update.");
         return createSaleInfoDTO(); 
     }
 

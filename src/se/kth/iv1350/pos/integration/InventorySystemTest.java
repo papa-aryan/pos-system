@@ -14,13 +14,11 @@ public class InventorySystemTest {
     @BeforeEach
     public void setUp() {
         instanceToTest = new InventorySystem();
-        System.out.println("InventorySystemTest: Set up complete."); 
     }
 
     @AfterEach
     public void tearDown() {
         instanceToTest = null;
-        System.out.println("InventorySystemTest: Tear down complete."); 
     }
 
 

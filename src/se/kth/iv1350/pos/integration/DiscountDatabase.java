@@ -13,20 +13,13 @@ public class DiscountDatabase {
      * @return A DiscountInfoDTO containing discount details, or null if no discount applies.
      */
     public DiscountInfoDTO getDiscount(int customerID, SaleInfoDTO saleInfo) {
-        // System.out.println("DiscountDatabase: Checking discounts for customer ID: " + customerID);
         
         if (customerID == 1234) {
-            // System.out.println("DiscountDatabase: Found 10% discount for customer " + customerID);
             return new DiscountInfoDTO(new Amount(0), 10, "Percentage");
         } else {
-            // System.out.println("DiscountDatabase: No discount found for customer " + customerID);
+            // No discount found for customer
             return null; 
         }
-        
-        // Example for amount-based discount:
-        // if (customerID == 5678) {
-        //     return new DiscountInfoDTO(new Amount(5.00), 0, "Amount"); // 5.00 (amount) discount
-        // }
     }
 
 }

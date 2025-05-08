@@ -69,7 +69,7 @@ public class Controller {
         if (itemInfo != null) {
             sale.addItem(itemInfo, quantity);
         } else {
-            // System.err.println("Controller ERROR: Item ID " + itemID + " not found in inventory. Item NOT added to sale.");
+            // Item not found, error already handled by not adding
         }
     }
 
@@ -80,7 +80,6 @@ public class Controller {
      * @param customerID The ID of the customer requesting the discount.
      */
     public void requestDiscount(int customerID) {
-        // System.out.println("Controller: Received request for discount for customer ID: " + customerID);
         if (!isSaleStarted()) {
             return;
         }
@@ -90,8 +89,6 @@ public class Controller {
         DiscountInfoDTO discountInfo = discDB.getDiscount(customerID, saleInfo);
 
         sale.applyDiscount(discountInfo);
-
-        // System.out.println("Controller: Discount request processed.");
     }
 
     /*
@@ -99,16 +96,11 @@ public class Controller {
      * (Further steps like payment and receipt printing would follow).
      */
     public void endSale() {
-        // System.out.println("Controller: Received request to end sale.");
-
         if (!isSaleStarted()) {
             return;
         }
 
-        Amount finalTotal = sale.calculateAndGetFinalTotal(); 
-
-        System.out.println("\nEnd sale:");
-        System.out.println("Total cost (incl VAT): " + finalTotal);
+        sale.calculateAndGetFinalTotal();
     }
 
      /*
@@ -120,7 +112,6 @@ public class Controller {
      * @param paidAmount The amount of money paid by the customer.
      */
     public void makePayment(Amount paidAmount) {
-        // System.out.println("Controller: Received request to make payment. Amount: " + paidAmount);
         if (!isSaleStarted()) {
             return;
         }
@@ -128,31 +119,22 @@ public class Controller {
              return;
         }
 
-        // TODO: saved try...catch for seminar 4
-    //    try {
-            ReceiptDTO receiptData = sale.processPaymentAndGetReceiptDetails(paidAmount); 
+        // TODO: try...catch for seminar 4
+        ReceiptDTO receiptData = sale.processPaymentAndGetReceiptDetails(paidAmount); 
 
-            printer.printReceipt(receiptData);
+        printer.printReceipt(receiptData);
 
-            SaleInfoDTO saleInfoAccounting = sale.getSaleInfoForAccounting(); 
+        SaleInfoDTO saleInfoAccounting = sale.getSaleInfoForAccounting(); 
 
-            accSys.updateAccounting(saleInfoAccounting);
+        accSys.updateAccounting(saleInfoAccounting);
 
-            SaleInfoDTO saleInfoInventory = sale.getSaleInfoForInventory(); 
+        SaleInfoDTO saleInfoInventory = sale.getSaleInfoForInventory(); 
 
-            invSys.updateInventory(saleInfoInventory);
-
-            // System.out.println("Controller: Payment processed successfully.");
-
-    //    } catch (IllegalArgumentException | IllegalStateException e) {
-            // Handle errors like insufficient payment or calling out of order
-            // System.err.println("Controller ERROR during payment: " + e.getMessage());
-    //    }
+        invSys.updateInventory(saleInfoInventory);
     }
 
     private boolean isSaleStarted() {
         if (sale == null) {
-            // System.err.println("Controller ERROR: Operation cannot be performed before starting a sale.");
             return false;
         }
         return true;
@@ -160,7 +142,6 @@ public class Controller {
 
     private boolean isValidQuantity(int quantity, int itemID) {
         if (quantity <= 0) {
-             // System.err.println("Controller ERROR: Quantity must be positive. Item ID " + itemID + " NOT processed.");
              return false;
         }
         return true;
@@ -168,7 +149,6 @@ public class Controller {
     
     private boolean isSaleEnded() {
         if (sale.getFinalTotalWithTax() == null) {
-            // System.err.println("Controller ERROR: Cannot make payment before endSale() is called.");
             return false;
        }
        return true;
