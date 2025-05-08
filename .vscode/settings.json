@@ -1,8 +1,9 @@
 {
     "java.project.referencedLibraries": [
-        "lib/junit-platform-console-standalone-1.13.0-M2.jar"
+        "c:\\Users\\aryan\\OneDrive\\Desktop\\objO_design\\kod_sem3\\lib\\junit-platform-console-standalone-1.13.0-M2.jar"
     ],
     "java.project.sourcePaths": [
-        "src"
+        "src/main",
+        "src/test"
     ]
 }
