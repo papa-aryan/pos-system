@@ -35,7 +35,7 @@ public class ControllerTest {
     // Tests for enterItem
 
     @Test
-    void testEnterItemValidUpdatesSaleTotal() {
+    void testEnterItemValidUpdatesSaleTotal() throws ItemNotFoundException {
         instanceToTest.startSale();
         int itemID = 101;
         int quantity = 2;
@@ -46,7 +46,7 @@ public class ControllerTest {
     }
 
     @Test
-    void testEnterItemInvalidQuantityDoesNotUpdateSaleTotal() {
+    void testEnterItemInvalidQuantityDoesNotUpdateSaleTotal() throws ItemNotFoundException {
         instanceToTest.startSale();
         Amount initialTotal = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
         int itemID = 101;
@@ -60,28 +60,29 @@ public class ControllerTest {
         assertEquals(initialTotal, totalAfterInvalid, "Entering item with negative quantity should not change sale total.");
     }
 
-    @Test
-    void testEnterItemNotFoundDoesNotUpdateSaleTotal() {
-        instanceToTest.startSale();
-        Amount initialTotal = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
-        int itemIDNotFound = 999;
-        int quantity = 1;
-        instanceToTest.enterItem(itemIDNotFound, quantity);
-        Amount totalAfterNotFound = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
-        assertEquals(initialTotal, totalAfterNotFound, "Entering non-existent item should not change sale total.");
-    }
-
      @Test
-    void testEnterItemBeforeStartSaleDoesNothing() {
+    void testEnterItemBeforeStartSaleDoesNothing() throws ItemNotFoundException {
         instanceToTest.enterItem(101, 1);
         // Check that the internal sale object is still null (or wasn't accessed causing NullPointerException)
         assertNull(instanceToTest.sale, "Sale object should be null if enterItem called before startSale.");
     }
 
+    @Test
+    void testEnterItemInvalidIDPassesAlongExceptionToView() {
+        instanceToTest.startSale();
+        int itemIDNotFound = 999;
+        int quantity = 1;
+
+        ItemNotFoundException thrown = assertThrows(ItemNotFoundException.class, () -> {
+            instanceToTest.enterItem(itemIDNotFound, quantity);
+        }, "enterItem should propagate ItemNotFoundException when InventorySystem throws it.");
+        assertEquals(itemIDNotFound, thrown.getItemIDNotFound(), "The propagated exception should contain the correct non-existing itemID.");
+    }
+
     // Tests for requestDiscount
 
     @Test
-    void testRequestDiscountAppliesDiscountToSale() {
+    void testRequestDiscountAppliesDiscountToSale() throws ItemNotFoundException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 2); 
         int customerIDWithDiscount = 1234;
@@ -94,7 +95,7 @@ public class ControllerTest {
     }
 
     @Test
-    void testRequestDiscountDoesNotApplyDiscountToSale() {
+    void testRequestDiscountDoesNotApplyDiscountToSale() throws ItemNotFoundException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 2); 
         Amount initialTotal = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
@@ -115,7 +116,7 @@ public class ControllerTest {
     // Tests for endSale
 
     @Test
-    void testEndSaleCalculatesFinalTotal() {
+    void testEndSaleCalculatesFinalTotal() throws ItemNotFoundException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 1);
         instanceToTest.endSale();
@@ -138,7 +139,7 @@ public class ControllerTest {
     // Tests for makePayment
 
     @Test
-    void testMakePaymentSuccessfulFlow() {
+    void testMakePaymentSuccessfulFlow() throws ItemNotFoundException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 1); 
         instanceToTest.endSale();
@@ -159,7 +160,7 @@ public class ControllerTest {
     }
 
     @Test
-    void testMakePaymentBeforeEndSale() {
+    void testMakePaymentBeforeEndSale() throws ItemNotFoundException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 1);
         Amount paidAmount = new Amount(20.0);
@@ -170,7 +171,7 @@ public class ControllerTest {
     }
 
      @Test
-    void testMakePaymentWithInsufficientAmount() {
+    void testMakePaymentWithInsufficientAmount() throws ItemNotFoundException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 1); 
         instanceToTest.endSale();

@@ -14,9 +14,10 @@ public class InventorySystem {
      * This simulates looking up an item ID and fetching its details.
      *
      * @param itemID The unique identifier for the item to retrieve.
-     * @return An ItemDTO containing the item's information if found, otherwise null.
+     * @return An ItemDTO containing the item's information if found.
+     * @throws ItemNotFoundException If the itemID does not correspond to a known item.
      */
-    public ItemDTO getItemInfo(int itemID) {
+    public ItemDTO getItemInfo(int itemID) throws ItemNotFoundException {
 
         if (itemID == 101) {
             String description = "Coffee";
@@ -32,7 +33,7 @@ public class InventorySystem {
 
         } else {
             // Item not found in the inventory system.
-            return null; 
+            throw new ItemNotFoundException(itemID);
         }
     }
 

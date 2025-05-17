@@ -1,6 +1,7 @@
 package se.kth.iv1350.pos.view;
 
 import se.kth.iv1350.pos.controller.Controller;
+import se.kth.iv1350.pos.integration.ItemNotFoundException; // Added import
 import se.kth.iv1350.pos.model.Amount; 
 
 
@@ -55,12 +56,16 @@ public class View {
 
     /*
      * Private helper method to simulate a user entering item details.
-     * Calls the controller's enterItem method.
+     * Calls the controller's enterItem method and handles ItemNotFoundException.
      */
     private void enterItem(int itemID, int quantity) {
         System.out.println(); 
         System.out.println("Add " + quantity + " item(s) with item id " + itemID + ":");
-        contr.enterItem(itemID, quantity);
+        try {
+            contr.enterItem(itemID, quantity);
+        } catch (ItemNotFoundException e) {
+            System.err.println("ERROR: " + e.getMessage());
+        }
     }
 
     /*

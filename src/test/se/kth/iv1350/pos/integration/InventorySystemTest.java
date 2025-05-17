@@ -23,21 +23,21 @@ public class InventorySystemTest {
 
 
     @Test
-    public void testGetItemInfoFoundReturnsDTO() {
+    public void testGetItemInfoFoundReturnsDTO() throws ItemNotFoundException {
         int itemIDFound = 101;
         ItemDTO result = instanceToTest.getItemInfo(itemIDFound);
         assertNotNull(result, "getItemInfo should return an ItemDTO for a valid ID.");
     }
 
     @Test
-    public void testGetItemInfoFoundHasCorrectID() {
+    public void testGetItemInfoFoundHasCorrectID() throws ItemNotFoundException {
         int itemIDFound = 101;
         ItemDTO result = instanceToTest.getItemInfo(itemIDFound);
         assertEquals(itemIDFound, result.getItemID(), "The returned DTO should have the correct itemID.");
     }
 
     @Test
-    public void testGetItemInfoFoundAnotherID() {
+    public void testGetItemInfoFoundAnotherID() throws ItemNotFoundException {
         int itemIDFound = 102;
         ItemDTO result = instanceToTest.getItemInfo(itemIDFound);
         assertNotNull(result, "getItemInfo should return an ItemDTO for another valid ID.");
@@ -45,14 +45,16 @@ public class InventorySystemTest {
     }
 
     @Test
-    public void testGetItemInfoNotFoundReturnsNull() {
+    public void testGetItemInfoNotFoundThrowsException() {
         int itemIDNotFound = 999;
-        ItemDTO result = instanceToTest.getItemInfo(itemIDNotFound);
-        assertNull(result, "getItemInfo should return null for an invalid ID.");
+        ItemNotFoundException thrown = assertThrows(ItemNotFoundException.class, () -> {
+            instanceToTest.getItemInfo(itemIDNotFound);
+        }, "getItemInfo should throw ItemNotFoundException for an invalid ID.");
+        assertEquals(itemIDNotFound, thrown.getItemIDNotFound(), "The exception should contain the correct itemID.");
     }
 
     @Test
-    public void testGetItemInfoFoundHasCorrectDescription() {
+    public void testGetItemInfoFoundHasCorrectDescription() throws ItemNotFoundException {
         int itemIDFound = 101;
         String expectedDescription = "Coffee"; 
         ItemDTO result = instanceToTest.getItemInfo(itemIDFound);

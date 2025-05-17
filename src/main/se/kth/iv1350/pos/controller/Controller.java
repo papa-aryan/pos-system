@@ -5,6 +5,7 @@ import se.kth.iv1350.pos.integration.DiscountDatabase;
 import se.kth.iv1350.pos.integration.InventorySystem;
 import se.kth.iv1350.pos.integration.Printer;
 import se.kth.iv1350.pos.integration.ItemDTO;
+import se.kth.iv1350.pos.integration.ItemNotFoundException; // Added import
 import se.kth.iv1350.pos.model.Sale;
 import se.kth.iv1350.pos.model.SaleInfoDTO;
 import se.kth.iv1350.pos.integration.DiscountInfoDTO;
@@ -53,23 +54,27 @@ public class Controller {
      *
      * @param itemID The unique identifier of the item to enter.
      * @param quantity The quantity of the item to enter.
+     * @throws ItemNotFoundException If the itemID does not correspond to a known item.
      */
-    public void enterItem(int itemID, int quantity) {
+    public void enterItem(int itemID, int quantity) throws ItemNotFoundException {
 
         if (!isSaleStarted()) {
+            // System.err.println("Error: Sale has not been started. Cannot enter item.");
             return;
         }
-    
-        if (!isValidQuantity(quantity, itemID)) {
-             return; 
-        }
-        
-        ItemDTO itemInfo = invSys.getItemInfo(itemID);
 
-        if (itemInfo != null) {
+        if (!isValidQuantity(quantity, itemID)) {
+             // System.err.println("Error: Invalid quantity (" + quantity + ") for item ID " + itemID + ".");
+             return;
+        }
+
+        try {
+            ItemDTO itemInfo = invSys.getItemInfo(itemID);
+
             sale.addItem(itemInfo, quantity);
-        } else {
-            // Item not found, error already handled by not adding
+            // System.out.println("Successfully added " + quantity + " of item " + itemID); // For debugging
+        } catch (ItemNotFoundException e) {
+            throw e;
         }
     }
 
