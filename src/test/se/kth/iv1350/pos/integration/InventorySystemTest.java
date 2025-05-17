@@ -54,6 +54,15 @@ public class InventorySystemTest {
     }
 
     @Test
+    public void testGetItemInfoSimulatedDatabaseFailureThrowsException() {
+        int itemIDForDbFailure = 666;
+        DatabaseFailureException thrown = assertThrows(DatabaseFailureException.class, () -> {
+            instanceToTest.getItemInfo(itemIDForDbFailure);
+        }, "getItemInfo should throw DatabaseFailureException for the simulated DB failure ID.");
+        assertTrue(thrown.getMessage().contains("Could not connect to the item database"), "The exception message should indicate a DB connection issue.");
+    }
+
+    @Test
     public void testGetItemInfoFoundHasCorrectDescription() throws ItemNotFoundException {
         int itemIDFound = 101;
         String expectedDescription = "Coffee"; 

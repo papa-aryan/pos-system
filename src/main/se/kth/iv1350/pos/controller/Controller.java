@@ -1,11 +1,12 @@
 package se.kth.iv1350.pos.controller;
 
 import se.kth.iv1350.pos.integration.AccountingSystem;
+import se.kth.iv1350.pos.integration.DatabaseFailureException;
 import se.kth.iv1350.pos.integration.DiscountDatabase;
 import se.kth.iv1350.pos.integration.InventorySystem;
 import se.kth.iv1350.pos.integration.Printer;
 import se.kth.iv1350.pos.integration.ItemDTO;
-import se.kth.iv1350.pos.integration.ItemNotFoundException; // Added import
+import se.kth.iv1350.pos.integration.ItemNotFoundException;
 import se.kth.iv1350.pos.model.Sale;
 import se.kth.iv1350.pos.model.SaleInfoDTO;
 import se.kth.iv1350.pos.integration.DiscountInfoDTO;
@@ -56,8 +57,7 @@ public class Controller {
      * @param quantity The quantity of the item to enter.
      * @throws ItemNotFoundException If the itemID does not correspond to a known item.
      */
-    public void enterItem(int itemID, int quantity) throws ItemNotFoundException {
-
+    public void enterItem(int itemID, int quantity) throws ItemNotFoundException, OperationFailedException {
         if (!isSaleStarted()) {
             // System.err.println("Error: Sale has not been started. Cannot enter item.");
             return;
@@ -75,6 +75,10 @@ public class Controller {
             // System.out.println("Successfully added " + quantity + " of item " + itemID); // For debugging
         } catch (ItemNotFoundException e) {
             throw e;
+        } catch (DatabaseFailureException e) {
+            // This is the new catch block to handle DatabaseFailureException
+            // and wrap it in an OperationFailedException.
+            throw new OperationFailedException("Operation failed due to a database error.", e);
         }
     }
 
@@ -124,7 +128,7 @@ public class Controller {
              return;
         }
 
-        // TODO: try...catch for seminar 4
+
         ReceiptDTO receiptData = sale.processPaymentAndGetReceiptDetails(paidAmount); 
 
         printer.printReceipt(receiptData);

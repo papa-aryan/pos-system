@@ -35,7 +35,7 @@ public class ControllerTest {
     // Tests for enterItem
 
     @Test
-    void testEnterItemValidUpdatesSaleTotal() throws ItemNotFoundException {
+    void testEnterItemValidUpdatesSaleTotal() throws ItemNotFoundException, OperationFailedException {
         instanceToTest.startSale();
         int itemID = 101;
         int quantity = 2;
@@ -46,7 +46,7 @@ public class ControllerTest {
     }
 
     @Test
-    void testEnterItemInvalidQuantityDoesNotUpdateSaleTotal() throws ItemNotFoundException {
+    void testEnterItemInvalidQuantityDoesNotUpdateSaleTotal() throws ItemNotFoundException, OperationFailedException {
         instanceToTest.startSale();
         Amount initialTotal = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
         int itemID = 101;
@@ -61,7 +61,7 @@ public class ControllerTest {
     }
 
      @Test
-    void testEnterItemBeforeStartSaleDoesNothing() throws ItemNotFoundException {
+    void testEnterItemBeforeStartSaleDoesNothing() throws ItemNotFoundException, OperationFailedException {
         instanceToTest.enterItem(101, 1);
         // Check that the internal sale object is still null (or wasn't accessed causing NullPointerException)
         assertNull(instanceToTest.sale, "Sale object should be null if enterItem called before startSale.");
@@ -79,10 +79,25 @@ public class ControllerTest {
         assertEquals(itemIDNotFound, thrown.getItemIDNotFound(), "The propagated exception should contain the correct non-existing itemID.");
     }
 
+    @Test
+    void testEnterItemDatabaseFailureWrapsAndThrowsOperationFailedException() {
+        instanceToTest.startSale();
+        int itemIDForDbFailure = 666;
+        int quantity = 1;
+
+        OperationFailedException thrown = assertThrows(OperationFailedException.class, () -> {
+            instanceToTest.enterItem(itemIDForDbFailure, quantity);
+        }, "enterItem should throw OperationFailedException when InventorySystem simulates a DB error.");
+
+        assertNotNull(thrown.getCause(), "OperationFailedException should have a cause.");
+        assertTrue(thrown.getCause() instanceof DatabaseFailureException, "The cause of OperationFailedException should be DatabaseFailureException.");
+        assertTrue(thrown.getMessage().contains("Operation failed due to a database error."), "The exception message should indicate an operation failure due to DB.");
+    }
+
     // Tests for requestDiscount
 
     @Test
-    void testRequestDiscountAppliesDiscountToSale() throws ItemNotFoundException {
+    void testRequestDiscountAppliesDiscountToSale() throws ItemNotFoundException, OperationFailedException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 2); 
         int customerIDWithDiscount = 1234;
@@ -95,7 +110,7 @@ public class ControllerTest {
     }
 
     @Test
-    void testRequestDiscountDoesNotApplyDiscountToSale() throws ItemNotFoundException {
+    void testRequestDiscountDoesNotApplyDiscountToSale() throws ItemNotFoundException, OperationFailedException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 2); 
         Amount initialTotal = instanceToTest.sale.getSaleInfoForDiscount().getRunningTotal();
@@ -116,7 +131,7 @@ public class ControllerTest {
     // Tests for endSale
 
     @Test
-    void testEndSaleCalculatesFinalTotal() throws ItemNotFoundException {
+    void testEndSaleCalculatesFinalTotal() throws ItemNotFoundException, OperationFailedException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 1);
         instanceToTest.endSale();
@@ -139,7 +154,7 @@ public class ControllerTest {
     // Tests for makePayment
 
     @Test
-    void testMakePaymentSuccessfulFlow() throws ItemNotFoundException {
+    void testMakePaymentSuccessfulFlow() throws ItemNotFoundException, OperationFailedException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 1); 
         instanceToTest.endSale();
@@ -160,7 +175,7 @@ public class ControllerTest {
     }
 
     @Test
-    void testMakePaymentBeforeEndSale() throws ItemNotFoundException {
+    void testMakePaymentBeforeEndSale() throws ItemNotFoundException, OperationFailedException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 1);
         Amount paidAmount = new Amount(20.0);
@@ -171,7 +186,7 @@ public class ControllerTest {
     }
 
      @Test
-    void testMakePaymentWithInsufficientAmount() throws ItemNotFoundException {
+    void testMakePaymentWithInsufficientAmount() throws ItemNotFoundException, OperationFailedException {
         instanceToTest.startSale();
         instanceToTest.enterItem(101, 1); 
         instanceToTest.endSale();

@@ -1,7 +1,8 @@
 package se.kth.iv1350.pos.view;
 
 import se.kth.iv1350.pos.controller.Controller;
-import se.kth.iv1350.pos.integration.ItemNotFoundException; // Added import
+import se.kth.iv1350.pos.integration.ItemNotFoundException;
+import se.kth.iv1350.pos.controller.OperationFailedException;
 import se.kth.iv1350.pos.model.Amount; 
 
 
@@ -37,6 +38,9 @@ public class View {
         // Simulate entering item 999 (should NOT be found)
         enterItem(999, 1);
 
+        // Simulate database failure with item ID 666 (per assignment instructions)
+        enterItem(666, 1);
+
         // Simulate entering item with invalid quantity
         enterItem(102, 0);
         enterItem(101, -1);
@@ -65,6 +69,9 @@ public class View {
             contr.enterItem(itemID, quantity);
         } catch (ItemNotFoundException e) {
             System.err.println("ERROR: " + e.getMessage());
+        } catch (OperationFailedException e) {
+            System.err.println("ERROR: Operation failed. Please try again or contact support.");
+            System.err.println("Developer details: " + e.getMessage() + " Caused by: " + e.getCause());
         }
     }
 
