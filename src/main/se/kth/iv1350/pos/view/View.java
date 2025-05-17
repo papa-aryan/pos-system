@@ -4,6 +4,7 @@ import se.kth.iv1350.pos.controller.Controller;
 import se.kth.iv1350.pos.integration.ItemNotFoundException;
 import se.kth.iv1350.pos.controller.OperationFailedException;
 import se.kth.iv1350.pos.model.Amount; 
+import se.kth.iv1350.pos.util.FileLogger;
 
 
 /*
@@ -12,6 +13,7 @@ import se.kth.iv1350.pos.model.Amount;
  */
 public class View {
     private Controller contr;
+    private FileLogger fileLogger;
 
     /*
      * Creates a new instance that uses constructor for calls to other layers.
@@ -20,6 +22,7 @@ public class View {
      */
     public View(Controller contr) {
         this.contr = contr;
+        this.fileLogger = new FileLogger();
     }
 
     /*
@@ -71,7 +74,7 @@ public class View {
             System.err.println("ERROR: " + e.getMessage());
         } catch (OperationFailedException e) {
             System.err.println("ERROR: Operation failed. Please try again or contact support.");
-            System.err.println("Developer details: " + e.getMessage() + " Caused by: " + e.getCause());
+            fileLogger.logException(e);
         }
     }
 
