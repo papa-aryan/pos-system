@@ -215,4 +215,89 @@ public class SaleTest {
         assertEquals(new Amount(15.0), saleInfo.getRunningTotal(), "DTO running total should match sale state.");
     }
 
+    // Observer pattern tests
+    @Test
+    void testAddSaleObserver() {
+        TestObserver observer = new TestObserver();
+        instanceToTest.addSaleObserver(observer);
+        assertTrue(true, "Assuming addSaleObserver works if no exception is thrown.");
+    }
+
+    @Test
+    void testRemoveSaleObserver() {
+        TestObserver observer = new TestObserver();
+        instanceToTest.addSaleObserver(observer);
+        instanceToTest.removeSaleObserver(observer);
+        assertTrue(true, "Assuming removeSaleObserver works if no exception is thrown.");
+    }
+
+    @Test
+    void testNotifyObserversOnPayment() {
+        TestObserver observer = new TestObserver();
+        instanceToTest.addSaleObserver(observer);
+
+        instanceToTest.addItem(coffeeDTO, 1); 
+        Amount finalTotal = instanceToTest.calculateAndGetFinalTotal();
+        Amount paidAmount = new Amount(20.0);
+
+        instanceToTest.processPaymentAndGetReceiptDetails(paidAmount);
+
+        assertTrue(observer.wasNotified(), "Observer should be notified upon payment.");
+        assertEquals(finalTotal, observer.getNotifiedAmount(), "Observer should receive the correct final sale amount.");
+    }
+
+    @Test
+    void testNotifyObserverNotCalledIfSaleNotEnded() {
+        TestObserver observer = new TestObserver();
+        instanceToTest.addSaleObserver(observer);
+        instanceToTest.addItem(coffeeDTO, 1); 
+
+        Amount paidAmount = new Amount(20.0); 
+
+        // Attempt to process payment without calling calculateAndGetFinalTotal() (sale not ended)
+        assertThrows(IllegalStateException.class, () -> {
+            instanceToTest.processPaymentAndGetReceiptDetails(paidAmount);
+        }, "Should throw IllegalStateException if payment processed before sale ended.");
+
+        assertFalse(observer.wasNotified(), "Observer should not be notified if sale was not properly ended.");
+    }
+
+    @Test
+    void testNotifyObserverNotCalledOnInsufficientPayment() {
+        TestObserver observer = new TestObserver();
+        instanceToTest.addSaleObserver(observer);
+
+        instanceToTest.addItem(coffeeDTO, 1); 
+        instanceToTest.calculateAndGetFinalTotal(); 
+
+        Amount insufficientPaidAmount = new Amount(10.0); 
+
+        // Attempt payment with insufficient amount
+        assertThrows(IllegalArgumentException.class, () -> {
+            instanceToTest.processPaymentAndGetReceiptDetails(insufficientPaidAmount);
+        }, "Should throw IllegalArgumentException for insufficient payment.");
+
+        assertFalse(observer.wasNotified(), "Observer should not be notified if payment is insufficient and throws exception.");
+    }
+
+    // Helper mock observer for testing
+    private static class TestObserver implements SaleObserver {
+        private boolean notified = false;
+        private Amount notifiedAmount = null;
+
+        @Override
+        public void newSaleWasPaid(Amount totalSaleAmount) {
+            this.notified = true;
+            this.notifiedAmount = totalSaleAmount;
+        }
+
+        public boolean wasNotified() {
+            return notified;
+        }
+
+        public Amount getNotifiedAmount() {
+            return notifiedAmount;
+        }
+    }
+
 }

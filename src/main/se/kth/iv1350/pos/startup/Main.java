@@ -7,6 +7,8 @@ import se.kth.iv1350.pos.integration.AccountingSystem;
 import se.kth.iv1350.pos.integration.DiscountDatabase;
 import se.kth.iv1350.pos.integration.InventorySystem;
 import se.kth.iv1350.pos.integration.Printer;
+import se.kth.iv1350.pos.view.TotalRevenueView;
+import se.kth.iv1350.pos.util.TotalRevenueFileOutput;
 
 /*
  * This class starts the application. 
@@ -23,8 +25,21 @@ public class Main {
         AccountingSystem accSys = new AccountingSystem();
         Printer printer = new Printer();
 
-        Controller  contr = new Controller(invSys, discDB, accSys, printer);
+        Controller contr = new Controller(invSys, discDB, accSys, printer);
+
+        // Create and register observers
+        TotalRevenueView totalRevenueView = new TotalRevenueView();
+        contr.addSaleObserver(totalRevenueView);
+        TotalRevenueFileOutput totalRevenueFileOutput = new TotalRevenueFileOutput();
+        contr.addSaleObserver(totalRevenueFileOutput);
+
         View view = new View(contr);
-        view.runFakeExecution();
+        try {
+            view.runFakeExecution();
+        } finally {
+            if (totalRevenueFileOutput != null) {
+                totalRevenueFileOutput.closeLogger();
+            }
+        }
     }
 }

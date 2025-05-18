@@ -20,6 +20,7 @@ public class Sale {
     private Amount amountPaidByCustomer; 
     private Amount changeToCustomer; 
     private Amount finalTotalWithTax; 
+    private List<SaleObserver> observers = new ArrayList<>(); 
 
     private static class SaleItem {
         ItemDTO itemInfo;
@@ -70,7 +71,6 @@ public class Sale {
         Amount itemPriceBeforeTax = itemInfo.getPrice();
     
         // Update running total
-        // TODO: turn upDateRunningTotal into a helper method for clarification.
         Amount itemsTotalPrice = itemPriceBeforeTax.multiply(quantity);
         this.runningTotalBeforeTax = this.runningTotalBeforeTax.plus(itemsTotalPrice);
     
@@ -92,7 +92,7 @@ public class Sale {
      *
      * @return A SaleInfoDTO containing relevant sale data.
      */
-    public SaleInfoDTO getSaleInfoForDiscount() { // Renamed for clarity, used by multiple callers now
+    public SaleInfoDTO getSaleInfoForDiscount() { 
         return createSaleInfoDTO(); 
     }
 
@@ -164,6 +164,34 @@ public class Sale {
         return this.finalTotalWithTax;
     }
 
+    /**
+     * Registers an observer to be notified of completed sales.
+     * @param observer The observer to add.
+     */
+    public void addSaleObserver(SaleObserver observer) {
+        if (observer != null) {
+            observers.add(observer);
+        }
+    }
+
+    /**
+     * Unregisters an observer.
+     * @param observer The observer to remove.
+     */
+    public void removeSaleObserver(SaleObserver observer) {
+        observers.remove(observer);
+    }
+
+    /**
+     * Notifies all registered observers that a sale has been paid.
+     * @param paidSaleAmount The total amount of the paid sale.
+     */
+    private void notifyObservers(Amount paidSaleAmount) {
+        for (SaleObserver observer : observers) {
+            observer.newSaleWasPaid(paidSaleAmount);
+        }
+    }
+
 
     /*
      * Processe the payment, calculate change, and generate receipt data.
@@ -179,12 +207,17 @@ public class Sale {
         this.amountPaidByCustomer = paidAmount;
         this.changeToCustomer = calculateChange(paidAmount); 
 
+        // Notify observers after successful payment processing
+        if (this.finalTotalWithTax != null) { // Ensure sale was properly ended and total calculated
+             notifyObservers(this.finalTotalWithTax);
+        }
+
         return createReceiptDTO(); 
     }
 
     private void ensureSaleIsEnded() {
         if (this.finalTotalWithTax == null) {
-            // TODO: throw IllegalStateException for seminar 4
+            throw new IllegalStateException("The sale must be ended (final total calculated) before payment can be processed.");
         }
     }
 
@@ -198,7 +231,7 @@ public class Sale {
      */
     private Amount calculateChange(Amount paidAmount) {
         if (isPaymentInsufficient(paidAmount)) { 
-            // TODO: throw IllegalArgumentException for seminar 4
+            throw new IllegalArgumentException("Paid amount (" + paidAmount + ") is less than total amount due (" + this.finalTotalWithTax + ").");
         }
         return paidAmount.minus(this.finalTotalWithTax);
     }

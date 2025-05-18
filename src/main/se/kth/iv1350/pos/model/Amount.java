@@ -1,6 +1,9 @@
 package se.kth.iv1350.pos.model;
 
 import java.util.Objects;
+import java.util.Locale;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 /*
  * Represents an amount of money. This is a value object.
@@ -65,7 +68,10 @@ public final class Amount {
      * @return The amount formatted as a string (e.g., "15.70").
      */
     public String toString() {
-        return String.format("%.2f", amount);
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+        symbols.setDecimalSeparator('.'); // Force period as decimal separator
+        DecimalFormat df = new DecimalFormat("0.00", symbols);
+        return df.format(amount);
     }
 
 

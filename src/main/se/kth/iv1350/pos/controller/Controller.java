@@ -12,6 +12,9 @@ import se.kth.iv1350.pos.model.SaleInfoDTO;
 import se.kth.iv1350.pos.integration.DiscountInfoDTO;
 import se.kth.iv1350.pos.model.Amount;
 import se.kth.iv1350.pos.model.ReceiptDTO;
+import se.kth.iv1350.pos.model.SaleObserver; 
+import java.util.ArrayList; 
+import java.util.List; 
 
 
 /*
@@ -22,6 +25,7 @@ public class Controller {
     private DiscountDatabase discDB;
     private AccountingSystem accSys;
     private Printer printer;
+    private List<SaleObserver> saleObservers = new ArrayList<>(); 
 
     // Package private to allow access from test files
     Sale sale;
@@ -48,6 +52,10 @@ public class Controller {
      */
     public void startSale() {
         sale = new Sale();
+        // Register observers with the new Sale instance
+        for (SaleObserver obs : saleObservers) {
+            sale.addSaleObserver(obs);
+        }
     }
 
     /*
@@ -122,24 +130,30 @@ public class Controller {
      */
     public void makePayment(Amount paidAmount) {
         if (!isSaleStarted()) {
+            System.err.println("Controller: Sale has not been started. Cannot make payment.");
             return;
         }
         if (!isSaleEnded()) {
+            System.err.println("Controller: Sale has not been ended. Cannot make payment.");
              return;
         }
 
+        try {
+            ReceiptDTO receiptData = sale.processPaymentAndGetReceiptDetails(paidAmount); 
 
-        ReceiptDTO receiptData = sale.processPaymentAndGetReceiptDetails(paidAmount); 
+            printer.printReceipt(receiptData);
 
-        printer.printReceipt(receiptData);
+            SaleInfoDTO saleInfoAccounting = sale.getSaleInfoForAccounting(); 
 
-        SaleInfoDTO saleInfoAccounting = sale.getSaleInfoForAccounting(); 
+            accSys.updateAccounting(saleInfoAccounting);
 
-        accSys.updateAccounting(saleInfoAccounting);
+            SaleInfoDTO saleInfoInventory = sale.getSaleInfoForInventory(); 
 
-        SaleInfoDTO saleInfoInventory = sale.getSaleInfoForInventory(); 
-
-        invSys.updateInventory(saleInfoInventory);
+            invSys.updateInventory(saleInfoInventory);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Controller: Payment failed - " + e.getMessage());
+            // In a real application, a more robust logging mechanism would be used.
+        }
     }
 
     private boolean isSaleStarted() {
@@ -162,6 +176,16 @@ public class Controller {
        }
        return true;
    }
+
+    /**
+     * Adds a SaleObserver to be notified of completed sales.
+     * @param observer The observer to add.
+     */
+    public void addSaleObserver(SaleObserver observer) {
+        if (observer != null) {
+            this.saleObservers.add(observer);
+        }
+    }
 
     /*
      * Gets the calculated change amount from the current sale.
