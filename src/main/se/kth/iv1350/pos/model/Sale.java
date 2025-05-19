@@ -207,8 +207,7 @@ public class Sale {
         this.amountPaidByCustomer = paidAmount;
         this.changeToCustomer = calculateChange(paidAmount); 
 
-        // Notify observers after successful payment processing
-        if (this.finalTotalWithTax != null) { // Ensure sale was properly ended and total calculated
+        if (this.finalTotalWithTax != null) { 
              notifyObservers(this.finalTotalWithTax);
         }
 

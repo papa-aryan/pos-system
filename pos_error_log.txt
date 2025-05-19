@@ -419,3 +419,14 @@ Caused by: se.kth.iv1350.pos.integration.DatabaseFailureException: Could not con
 	at se.kth.iv1350.pos.controller.Controller.enterItem(Controller.java:80)
 	... 3 more
 
+2025-05-18T17:40:48.7054235: Exception caught: Operation failed due to a database error.
+se.kth.iv1350.pos.controller.OperationFailedException: Operation failed due to a database error.
+	at se.kth.iv1350.pos.controller.Controller.enterItem(Controller.java:89)
+	at se.kth.iv1350.pos.view.View.enterItem(View.java:72)
+	at se.kth.iv1350.pos.view.View.runFakeExecution(View.java:45)
+	at se.kth.iv1350.pos.startup.Main.main(Main.java:38)
+Caused by: se.kth.iv1350.pos.integration.DatabaseFailureException: Could not connect to the item database.
+	at se.kth.iv1350.pos.integration.InventorySystem.getItemInfo(InventorySystem.java:25)
+	at se.kth.iv1350.pos.controller.Controller.enterItem(Controller.java:80)
+	... 3 more
+

@@ -84,8 +84,6 @@ public class Controller {
         } catch (ItemNotFoundException e) {
             throw e;
         } catch (DatabaseFailureException e) {
-            // This is the new catch block to handle DatabaseFailureException
-            // and wrap it in an OperationFailedException.
             throw new OperationFailedException("Operation failed due to a database error.", e);
         }
     }
